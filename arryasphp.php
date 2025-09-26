@@ -18,4 +18,7 @@ $colores[1] = "Naranja";
 
 // Mostramos el nuevo valor
 echo "El segundo color ahora es: $colores[1]<br>";
+// tambien podemos usar pre
+
 ?>
+
