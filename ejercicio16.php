@@ -7,7 +7,7 @@ $contador_suspensos = 0;
 if (isset($_GET['notas']) && trim($_GET['notas']) !== "") {
     $notas = explode(",", $_GET['notas']);
 
-    // Validar que todas las notas sean numéricas y estén entre 0 y 10
+
     foreach ($notas as $nota) {
         if (!is_numeric($nota) || $nota < 0 || $nota > 10) {
             $mensaje = "Error: Las notas deben ser números entre 0 y 10.";
@@ -16,7 +16,7 @@ if (isset($_GET['notas']) && trim($_GET['notas']) !== "") {
         }
     }
 
-    // Contar aprobados y suspensos
+   
     foreach ($notas as $nota) {
         if ($nota >= 5) {
             $contador_aprobados++;
