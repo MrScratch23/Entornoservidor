@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === "GET" && isset($_GET['generar'])) {
 <head>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>P.Lluyot</title>
+    <title>Ejercicio 9</title>
     <link rel='stylesheet' href='https://cdn.simplecss.org/simple.min.css'>
 </head>
 
