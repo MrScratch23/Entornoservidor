@@ -100,6 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 </head>
 <body>
+    <h1>CIFRADO BIEN CHULO Y GUAPO PARA MOVER LETRAS Y QUE PAREZCA UN MURLOCK HABLANDO</h1>
+    
 
     <form action="" method="get">
         <label for="texto">Texto:</label>
