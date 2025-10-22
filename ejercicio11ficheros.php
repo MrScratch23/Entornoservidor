@@ -1,92 +1,75 @@
 <?php
 
 $mensaje = "";
-$errores = array(
-    "errorNombre" => "",
-    "errorFichero" => "",
-);
-
-// validaciones de los datos
+$errores = [];
 
 $nombre = isset($_POST['nombre']) ? htmlspecialchars($_POST['nombre']) : '';
 $fichero = isset($_POST['fichero']) ? htmlspecialchars($_POST['fichero']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enviar'])) {
 
-    $palabrasNombre = strlen($nombre);
+    $longitudNombre = strlen($nombre);
 
-    if ($palabrasNombre < 4) {
-        $errores['errorNombre'] = "El archivo debe tener un nombre con mas de tres caracteres";
-    } elseif ($palabrasNombre > 31) {
-        $errores['errorNombre'] = "El archivo no debe tener mas de treinta caracteres.";
+    if ($longitudNombre < 4) {
+        $errores['errorNombre'] = "El archivo debe tener un nombre con más de tres caracteres.";
+    } elseif ($longitudNombre > 31) {
+        $errores['errorNombre'] = "El archivo no debe tener más de treinta caracteres.";
     }
 
     if (isset($_FILES['fichero'])) {
-        $fichero = $_FILES['fichero'];
-        if ($fichero['error'] == 0) {
+        $archivoSubido = $_FILES['fichero'];
 
-            $tamanyo = $_FILES['fichero']["size"];
-            $tipoArchivo = strtolower(pathinfo($fichero['name'], PATHINFO_EXTENSION));
+        if ($archivoSubido['error'] === 0) {
+            $tamanyo = $archivoSubido["size"];
+            $tipoArchivo = strtolower(pathinfo($archivoSubido['name'], PATHINFO_EXTENSION));
 
             if ($tamanyo > 100) {
-                $errores['errorFichero'] = "El archivo es demasiado grande. Maximo 100 bytes.";
-            }
-            if ($tipoArchivo !== 'txt') {
-                $errores['errorFichero'] = "El archivo debe contener la extension .txt";
-            }
+                $errores['errorFichero'] = "El archivo es demasiado grande. Máximo 100 bytes.";
+            } elseif ($tipoArchivo !== 'txt') {
+                $errores['errorFichero'] = "El archivo debe tener la extensión .txt";
+            } else {
+                // Procesar contenido si pasa validaciones anteriores
+                $contenido = file_get_contents($archivoSubido['tmp_name']);
+                $palabras = array_map('trim', explode(",", $contenido));
+                sort($palabras);
 
-            // verificar las palabras del archivo
-            $manejador = @fopen($fichero['tmp_name'], 'r');
-            $contenidoArchivo = '';
-            if ($manejador) {
-                $contenidoArchivo = fread($manejador, filesize($fichero['tmp_name']));
-                fclose($manejador);
-
-                // Dividir en caracteres para contar
-                $elementos = str_split($contenidoArchivo);
-
-                if (count($elementos) <= 5) {
-                    $errores['errorFichero'] = "El texto debe tener más de 5 caracteres.";
+                if (count($palabras) !== 5) {
+                    $errores['errorFichero'] = "El archivo debe tener exactamente 5 palabras separadas por comas.";
                 }
             }
+        } else {
+            $errores['errorFichero'] = "Error al subir el archivo.";
+        }
+    }
 
-            if (empty($errores)) {
-                $nombreFinal = $nombre . ".txt";
-                $destino = "/home/DAW2/Entornoservidor/palabras/" . $nombreFinal;
+    // Si NO hay errores (es decir, el array está vacío)
+    if (count($errores) === 0) {
+        $nombreFinal = $nombre . ".txt";
+        $destino = "/home/DAW2/Entornoservidor/palabras/" . $nombreFinal;
 
-                if (file_exists($destino)) {
-                    $errores['errorFichero'] = "El archivo ya existe en la carpeta.";
-                } else {
-                    // Leer el contenido original
-                    $contenidoOriginal = file_get_contents($fichero['tmp_name']);
+        if (file_exists($destino)) {
+            $errores['errorFichero'] = "El archivo ya existe en la carpeta.";
+        } else {
+            if (file_put_contents($destino, $contenido) !== false) {
+                $mensaje .= "<br>Archivo guardado en: $destino<br>";
+                $mensaje .= "Fichero guardado correctamente<br>";
+                $mensaje .= "Palabras del fichero:<ul>";
 
-                    // Dividir cada carácter y unirlo con comas
-                    $contenidoProcesado = implode(',', str_split($contenidoOriginal));
-
-                    // Guardar el nuevo contenido con caracteres separados por comas
-                    if (file_put_contents($destino, $contenidoProcesado) !== false) {
-                        $mensaje .= "<br>Archivo guardado en: $destino<br>";
-                        $mensaje .= "Fichero guardado correctamente<br>";
-                        $mensaje .= "Caracteres del fichero:<ul>";
-
-                        // Mostrar el contenido caracter por caracter
-                        $manejador = fopen($destino, 'r');
-                        if ($manejador) {
-                            while (!feof($manejador)) {
-                                $linea = fgets($manejador);
-                                $caracteres = explode(",", $linea);
-                                foreach ($caracteres as $caracter) {
-                                    $mensaje .= "<li>" . htmlspecialchars(trim($caracter)) . "</li>";
-                                }
-                            }
-                            fclose($manejador);
+                $manejador = fopen($destino, 'r');
+                if ($manejador) {
+                    while (!feof($manejador)) {
+                        $linea = fgets($manejador);
+                        $caracteres = explode(",", $linea);
+                        foreach ($caracteres as $caracter) {
+                            $mensaje .= "<li>" . htmlspecialchars(trim($caracter)) . "</li>";
                         }
-
-                        $mensaje .= "</ul>";
-                    } else {
-                        $errores['errorFichero'] = "Hubo un error al guardar el archivo.";
                     }
+                    fclose($manejador);
                 }
+
+                $mensaje .= "</ul>";
+            } else {
+                $errores['errorFichero'] = "Hubo un error al guardar el archivo.";
             }
         }
     }
