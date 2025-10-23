@@ -26,6 +26,9 @@ if (file_exists("preguntas.json")) {
 
         echo "<h2 class='notice'>Resultados: $aciertos/" . N_PREGUNTAS . " aciertos</h2>";
         unlink("respuestas_temp.txt");
+
+
+        
     } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
         // preparar los datos
         $indices_aleatorios = array_rand($preguntas, N_PREGUNTAS);
