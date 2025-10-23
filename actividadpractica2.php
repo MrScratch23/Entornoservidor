@@ -158,7 +158,7 @@ Asegúrate de abrir el archivo en modo "a+" para que puedas agregar nuevos regis
         En caso de error, asegúrate de mostrar el mensaje correspondiente al usuario.
 
         */
-
+        // encontre que putcsv es la correcta para ese tipo de archivos 
         if (fputcsv($archivo, $datos)) {
             $mensajeExito = "¡Registro completado correctamente!";
         } else {
