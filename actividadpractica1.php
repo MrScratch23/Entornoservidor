@@ -2,8 +2,24 @@
 $numero_mesas = 0;
 $reservas = array();
 
+
+// añado algunos datos de prueba
+
+$reservas = array(
+    array("nombreCliente" => "Pepe",   "numPersonas" => 4, "exterior" => true,  "horaReserva" => "21:00"),
+    array("nombreCliente" => "Ana",    "numPersonas" => 3, "exterior" => false, "horaReserva" => "22:00"),
+    array("nombreCliente" => "Paco",   "numPersonas" => 5, "exterior" => false, "horaReserva" => "21:30"),
+    array("nombreCliente" => "Manuel", "numPersonas" => 2, "exterior" => false, "horaReserva" => "21:00"),
+    array("nombreCliente" => "Rosa",   "numPersonas" => 6, "exterior" => false, "horaReserva" => "22:00"),
+    array("nombreCliente" => "Pedro",  "numPersonas" => 5, "exterior" => false, "horaReserva" => "20:00"),
+);
+
+// cuento el numero  número de mesas
+$numero_mesas = count($reservas);
+
 // parametros get
 if (isset($_GET['accion'])) {
+    // uso un switch en este caso
     switch ($_GET['accion']) {
         case 'reservar':
             if (isset($_GET['nombre']) && isset($_GET['personas'])) {
@@ -20,12 +36,13 @@ if (isset($_GET['accion'])) {
             break;
             
         case 'mostrar':
-            // Solo mostrar reservas
+            // solo mostrar reservas
             break;
     }
 }
 
 function realizarReserva($nombreCliente, $numPersonas, $exterior = false, $horaReserva = '20:00') {
+    // debo declarlas globales para poder modificarlas, no se si preferias otra manera
     global $reservas, $numero_mesas;
     
     $errores = "";
@@ -54,7 +71,7 @@ function realizarReserva($nombreCliente, $numPersonas, $exterior = false, $horaR
         $errores .= "No quedan suficientes mesas disponibles para grupos grandes. ";
     }
 
-    // Solo agregar la reserva si no hay errores
+    // solo agregar la reserva si no hay errores
     if (empty($errores)) {
         $nuevaReserva = array(
             "nombreCliente" => $nombreCliente,
@@ -79,7 +96,7 @@ function cancelarReserva($nombreCliente) {
     $reservaEncontrada = false;
     $nuevasReservas = array();
     
-    // Buscar y eliminar la reserva
+    // buscar y eliminar la reserva con un bucle
     foreach ($reservas as $reserva) {
         if ($reserva['nombreCliente'] === $nombreCliente) {
             $reservaEncontrada = true;
@@ -106,7 +123,7 @@ function mostrarReservas() {
     echo "<section class='reservas-section'>";
     echo "<h2>Listado de reservas</h2>";
     
-    // Tabla de reservas
+    // tabla de reservas hechas a lo bruto
     echo "<table class='tabla-reservas'>";
     echo "<thead>";
     echo "<tr>";
@@ -138,7 +155,7 @@ function mostrarReservas() {
     echo "</tbody>";
     echo "</table>";
     
-    // Contador de mesas
+    // contador de mesas
     echo "<div class='contador-mesas'>";
     echo "(" . $numero_mesas . "/10) mesas reservadas";
     echo "</div>";
@@ -303,7 +320,7 @@ function mostrarReservas() {
         </section>
 
         <main>
-            <!-- Mostrar reservas usando la función -->
+      
             <?php mostrarReservas(); ?>
         </main>
 
