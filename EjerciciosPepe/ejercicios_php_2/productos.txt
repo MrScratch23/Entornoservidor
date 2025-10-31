@@ -1,0 +1,15 @@
+1|Laptop HP Pavilion|799.99|10
+2|Smartphone Samsung Galaxy S21|699.99|25
+3|Auriculares Sony WH-1000XM4|349.99|15
+4|Cafetera Nespresso Vertuo|199.99|20
+5|Aspiradora robot Roomba i7|599.99|8
+6|Monitor LG UltraFine 4K|699.99|12
+7|Teclado mecánico Logitech G915|229.99|30
+8|Impresora multifunción Canon PIXMA|129.99|18
+9|Altavoz inteligente Amazon Echo|99.99|40
+10|Cámara mirrorless Sony A7 III|1999.99|5
+11|Tablet Apple iPad Air|549.99|22
+12|Smartwatch Garmin Fenix 6|599.99|14
+13|Consola Nintendo Switch|299.99|35
+14|Batidora de vaso Vitamix|399.99|7
+15|Disco duro externo WD 2TB|79.99|50
