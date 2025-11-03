@@ -1,0 +1,68 @@
+body {
+    min-height: 100vh;
+    font-family: 'Inter', Arial, sans-serif;
+    background: linear-gradient(135deg, #171c29 0%, #284e6d 100%);
+    margin: 0;
+    color: #eaf1fc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-main {
+    width: 100%;
+    max-width: 430px;
+    margin: auto;
+    text-align: center;
+    padding: 0;
+}
+
+.menu-main h1 {
+    font-size: 2.7rem;
+    margin-bottom: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #eaf1fc;
+    text-shadow: 0 2px 12px #17335a50;
+}
+
+.menu-grid {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: 1fr;
+}
+
+.menu-card {
+    display: block;
+    padding: 20px 0;
+    background: rgba(40, 77, 110, 0.22);
+    border-radius: 16px;
+    color: #eaf1fc;
+    text-decoration: none;
+    font-size: 1.26rem;
+    font-weight: 500;
+    border: 1px solid #25496680;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 6px 24px #1b356866;
+    transition:
+        background 0.2s,
+        border 0.2s,
+        transform 0.12s,
+        box-shadow 0.16s;
+    cursor: pointer;
+    outline: none;
+}
+
+.menu-card:hover,
+.menu-card:focus {
+    background: rgba(40, 77, 110, 0.48);
+    border-color: #56a0fc;
+    color: #fff;
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 10px 30px #56a0fc28;
+}
+
+.menu-card:active {
+    transform: scale(0.99);
+    box-shadow: 0 4px 16px #284e6d50;
+}
