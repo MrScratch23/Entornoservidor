@@ -1,0 +1,52 @@
+[
+  {
+    "pregunta": "¿Qué función se usa para mostrar texto en PHP?",
+    "opciones": ["echo", "print", "display", "show"],
+    "respuesta_correcta": "echo"
+  },
+  {
+    "pregunta": "¿Qué símbolo se utiliza para indicar una variable en PHP?",
+    "opciones": ["$", "@", "#", "&"],
+    "respuesta_correcta": "$"
+  },
+  {
+    "pregunta": "¿Cómo se declara una constante en PHP?",
+    "opciones": ["define()", "const()", "constant()", "setconst()"],
+    "respuesta_correcta": "define()"
+  },
+  {
+    "pregunta": "¿Cuál es la extensión estándar de un archivo PHP?",
+    "opciones": [".php", ".html", ".js", ".py"],
+    "respuesta_correcta": ".php"
+  },
+  {
+    "pregunta": "¿Qué función en PHP se usa para contar elementos en un array?",
+    "opciones": ["count()", "sizeof()", "length()", "array_count()"],
+    "respuesta_correcta": "count()"
+  },
+  {
+    "pregunta": "¿Qué función se utiliza para incluir un archivo en PHP?",
+    "opciones": ["include()", "require()", "import()", "add_file()"],
+    "respuesta_correcta": "include()"
+  },
+  {
+    "pregunta": "¿Cómo se inicia una sesión en PHP?",
+    "opciones": ["session_start()", "session_init()", "session()", "start_session()"],
+    "respuesta_correcta": "session_start()"
+  },
+  {
+    "pregunta": "¿Qué superglobal contiene datos enviados por POST?",
+    "opciones": ["$_POST", "$_REQUEST", "$_GET", "$_FORM"],
+    "respuesta_correcta": "$_POST"
+  },
+  {
+    "pregunta": "¿Qué función destruye una variable en PHP?",
+    "opciones": ["unset()", "destroy()", "delete()", "unset_var()"],
+    "respuesta_correcta": "unset()"
+  },
+  {
+    "pregunta": "¿Qué función se usa para obtener la longitud de una cadena?",
+    "opciones": ["strlen()", "count()", "strlength()", "string_size()"],
+    "respuesta_correcta": "strlen()"
+  }
+]
