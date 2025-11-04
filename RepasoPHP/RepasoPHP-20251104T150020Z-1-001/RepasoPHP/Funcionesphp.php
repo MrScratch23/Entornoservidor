@@ -1,4 +1,18 @@
 <?php
+
+/// VALIDACIONES
+
+function validarEmail($email) {
+    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+}
+
+function validarNumero($numero, $min = null, $max = null) {
+    if (!is_numeric($numero)) return false;
+    if ($min !== null && $numero < $min) return false;
+    if ($max !== null && $numero > $max) return false;
+    return true;
+}
+
 // ==================== FUNCIONES PARA ARRAYS INDEXADOS ====================
 
 function eliminarDelArray(&$array, $valor) {
@@ -47,6 +61,15 @@ function borrarValorArray(&$arrayAsociativo, $valor) {
     }
     return false;
 }
+
+function borrarClaveArray(&$arrayAsociativo, $clave) {
+    if (array_key_exists($clave, $arrayAsociativo)) {
+        unset($arrayAsociativo[$clave]);
+        return true;
+    }
+    return false;
+}
+
 
 /**
  * Borrar todas las ocurrencias de un valor en un array asociativo
@@ -134,6 +157,94 @@ function valorExiste($archivo, $valor) {
     return false;
 }
 
+function cargarDatos($archivo)
+{
+    //array que devolveremos con los datos de todos los usuarios.
+    $usuarios = [];
+    $temp = []; // array temporal
+    if (!file_exists($archivo)) return $usuarios; //salimos si no encuentra el archivo.
+    $manejador = @fopen($archivo, "r");
+    if ($manejador) { //si no da error al abrirlo
+        while (!feof($manejador)) {
+            $temp = fgetcsv($manejador);
+            if ($temp == false || count($temp) < 3) continue; //si no hay datos o son menos de 3 campos
+            else $usuarios[$temp[0]] = ["password" => $temp[1], "contador" => intval($temp[2])];
+        }
+
+        fclose($manejador);
+    }
+    return $usuarios;
+}
+
+
+function cargarDatosGenerica($archivo)
+{
+    //array que devolveremos con los datos de todos los usuarios.
+    $usuarios = [];
+    $temp = []; // array temporal
+    if (!file_exists($archivo)) return $usuarios; //salimos si no encuentra el archivo.
+    $manejador = @fopen($archivo, "r");
+    if ($manejador) { //si no da error al abrirlo
+        while (!feof($manejador)) {
+            $temp = fgetcsv($manejador);
+            if ($temp == false || count($temp) < 3) continue; //si no hay datos o son menos de 3 campos
+            else $usuarios[$temp[0]] = ["password" => $temp[1], "contador" => intval($temp[2])];
+        }
+
+        fclose($manejador);
+    }
+    return $usuarios;
+}
+
+
+function cargarDatosSUPER($archivo, $formato = 'indexado')
+{
+    $datos = [];
+    if (!file_exists($archivo)) return $datos;
+    
+    $manejador = @fopen($archivo, "r");
+    if ($manejador) {
+        // Leer primera línea para detectar encabezados
+        $primeraLinea = fgetcsv($manejador);
+        if ($primeraLinea === false) {
+            fclose($manejador);
+            return $datos;
+        }
+        
+        // Verificar si la primera línea parece encabezados (no numérica)
+        $tieneEncabezados = false;
+        if ($formato === 'auto') {
+            $tieneEncabezados = !is_numeric(trim($primeraLinea[0]));
+        }
+        
+        // Si tiene encabezados, procesar de forma asociativa
+        if ($tieneEncabezados) {
+            $encabezados = $primeraLinea;
+            while (!feof($manejador)) {
+                $temp = fgetcsv($manejador);
+                if ($temp === false || (count($temp) === 1 && empty(trim($temp[0])))) continue;
+                
+                $fila = [];
+                foreach ($encabezados as $index => $encabezado) {
+                    $fila[trim($encabezado)] = $temp[$index] ?? '';
+                }
+                $datos[] = $fila;
+            }
+        } else {
+            // Si no tiene encabezados, procesar como indexado
+            $datos[] = $primeraLinea; // Guardar la primera línea también
+            while (!feof($manejador)) {
+                $temp = fgetcsv($manejador);
+                if ($temp === false || (count($temp) === 1 && empty(trim($temp[0])))) continue;
+                $datos[] = $temp;
+            }
+        }
+        
+        fclose($manejador);
+    }
+    return $datos;
+}
+
 // ==================== FUNCIONES PARA MOSTRAR EN LISTAS ====================
 
 function arrayALista($array, $titulo = '') {
@@ -163,7 +274,7 @@ function arrayALista($array, $titulo = '') {
 function txtALista($archivo, $titulo = '') {
     if (!file_exists($archivo)) return "<p>Archivo no encontrado</p>";
     
-    $lineas = file($archivo, FILE_IGNORE_NEW_LINES);
+    $lineas = file($archivo); 
     if (empty($lineas)) return "<p>Archivo vacío</p>";
     
     $html = '';
@@ -173,7 +284,8 @@ function txtALista($archivo, $titulo = '') {
     
     $html .= '<ul>';
     foreach ($lineas as $linea) {
-        if (trim($linea) !== '') {
+        $linea = trim($linea); // Elimina saltos de línea y espacios
+        if ($linea !== '') {
             $html .= "<li>$linea</li>";
         }
     }
@@ -276,6 +388,7 @@ function csvATabla($archivo, $titulo = '') {
 
 // ==================== FUNCIÓN PARA SUBIR ARCHIVOS ====================
 
+// subir archivo + nombre aleatorio
 function subirArchivo($archivo, $carpetaDestino, $nuevoNombre = null) {
     if ($archivo['error'] !== UPLOAD_ERR_OK) {
         return "Error en la subida";
@@ -283,6 +396,14 @@ function subirArchivo($archivo, $carpetaDestino, $nuevoNombre = null) {
     
     $nombreFinal = $nuevoNombre ?: $archivo['name'];
     $rutaDestino = $carpetaDestino . '/' . $nombreFinal;
+    
+    // Si el archivo ya existe, generar nuevo nombre
+    if (file_exists($rutaDestino)) {
+        $extension = pathinfo($nombreFinal, PATHINFO_EXTENSION);
+        $nombreBase = pathinfo($nombreFinal, PATHINFO_FILENAME);
+        $nuevoNombre = $nombreBase . '_' . date('Y-m-d_H-i-s') . '.' . $extension;
+        $rutaDestino = $carpetaDestino . '/' . $nuevoNombre;
+    }
     
     if (move_uploaded_file($archivo['tmp_name'], $rutaDestino)) {
         return $rutaDestino;
@@ -338,6 +459,63 @@ function mostrarPersonajeConImagen($personaje) {
     echo "<img src='imagenes_personajes/" . $personaje['imagen'] . "' width='200'>";
 }
 
+
+// ==================== FUNCIONES PARA VALORES ALEATORIOS ====================
+
+/**
+ * Obtiene un valor aleatorio de un array indexado
+ */
+function valorAleatorio($array) {
+    if (empty($array)) {
+        return null;
+    }
+    
+    $indiceAleatorio = array_rand($array);
+    return $array[$indiceAleatorio];
+}
+
+/**
+ * Obtiene un valor aleatorio de un array asociativo
+ */
+function valorAleatorioAsociativo($array) {
+    if (empty($array)) {
+        return null;
+    }
+    
+    $claves = array_keys($array);
+    $claveAleatoria = $claves[array_rand($claves)];
+    return $array[$claveAleatoria];
+}
+
+/**
+ * Obtiene múltiples valores aleatorios de un array (sin repetición)
+ */
+function valoresAleatorios($array, $cantidad = 1) {
+    if (empty($array) || $cantidad <= 0) {
+        return [];
+    }
+    
+    // Si piden más elementos de los que hay, devolvemos todos
+    if ($cantidad >= count($array)) {
+        return array_values($array);
+    }
+    
+    $indicesAleatorios = array_rand($array, $cantidad);
+    
+    // array_rand devuelve un solo índice si $cantidad es 1
+    if ($cantidad == 1) {
+        return [$array[$indicesAleatorios]];
+    }
+    
+    $resultado = [];
+    foreach ($indicesAleatorios as $indice) {
+        $resultado[] = $array[$indice];
+    }
+    
+    return $resultado;
+}
+
+
 // ==================== EJEMPLOS DE USO ====================
 
 /*
@@ -375,4 +553,17 @@ $mensaje .= arrayATabla($usuario, 'Usuario Tabla');
 // SUBIR ARCHIVOS
 subirArchivo($_FILES['archivo'], $carpeta, 'nuevo_nombre');
 */
+
+/* Array indexado
+$frutas = ['manzana', 'banana', 'naranja', 'uva'];
+echo valorAleatorio($frutas); // Ej: "banana"
+
+Array asociativo  
+$colores = ['rojo' => '#FF0000', 'verde' => '#00FF00', 'azul' => '#0000FF'];
+echo valorAleatorioAsociativo($colores); // Ej: "#00FF00"
+
+ Múltiples valores
+$numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+print_r(valoresAleatorios($numeros, 3)); // Ej: [3, 7, 9]
+/*
 ?>

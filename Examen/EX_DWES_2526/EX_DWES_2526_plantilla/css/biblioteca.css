@@ -1,0 +1,32 @@
+/* Redefinimos las variables dentro del selector :root para el color verde */
+:root {
+    --accent: #cca26c; 
+    --accent-hover: #8e6238; 
+    --border: #d6c1a5; 
+    --link: #8e6938; 
+    --accent-bg: #f5ecdb;
+}
+.error {
+    display: block;
+    font-size: small;
+    margin-top: -4px;
+    margin-bottom: 5px;
+    /* background-color: lightyellow; */
+    color: red;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+nav a.active {
+    background: #cca26c; 
+    color: #fff !important;
+}
+
+nav a.active:hover {
+    color: #8e6238 !important;
+}
+

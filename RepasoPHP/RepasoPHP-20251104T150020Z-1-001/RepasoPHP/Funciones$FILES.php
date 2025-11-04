@@ -1,6 +1,8 @@
 <?php
 // ==================== FUNCIONES PARA $_FILES ====================
 
+// la ruta de archivos es ./carpeta
+
 /**
  * Validar tipo de archivo
  */
@@ -22,6 +24,14 @@ function validarTamañoArchivo($archivo, $tamañoMaximoMB = 5) {
     return $archivo['size'] <= $tamañoMaximoBytes;
 }
 
+
+// tabla tranformacion Magnitud	Símbolo	Equivalencia
+//1 Kilobyte	KB	1.024 bytes
+// 1 Megabyte	MB	1.024 kilobytes
+// 1 Gigabyte	GB	1.024 Megabytes
+// 1 Terabyte	TB	1.024 Gigabytes
+
+
 /**
  * Obtener extensión segura
  */
@@ -35,6 +45,8 @@ function obtenerExtension($nombreArchivo) {
     return false;
 }
 
+
+
 /**
  * Generar nombre único para archivo
  */
@@ -45,9 +57,40 @@ function generarNombreUnico($archivoOriginal) {
     return uniqid() . '_' . date('Y-m-d_H-i-s') . '.' . $extension;
 }
 
+// funcion mas simple y generica, con nombre unico
+function subirArchivo($archivo, $carpetaDestino) {
+    // Verificar que se subió correctamente
+    if ($archivo['error'] !== UPLOAD_ERR_OK) {
+        return false;
+    }
+    
+   
+    
+    // Generar nombre único
+    $extension = pathinfo($archivo['name'], PATHINFO_EXTENSION);
+    $nombreUnico = uniqid() . '.' . $extension;
+    $rutaDestino = $carpetaDestino . '/' . $nombreUnico;
+    
+    // Mover archivo y retornar true/false
+    return move_uploaded_file($archivo['tmp_name'], $rutaDestino);
+}
+
+// ejemplo 
+
+if (subirArchivo($_FILES['archivo'], './uploads')) {
+    echo "✅ Archivo subido correctamente";
+} else {
+    echo "❌ Error al subir el archivo";
+}
+
+
 /**
  * Subir archivo con validaciones completas
  */
+
+
+
+
 function subirArchivoSeguro($archivo, $carpetaDestino, $opciones = []) {
     // Opciones por defecto
     $opciones = array_merge([
