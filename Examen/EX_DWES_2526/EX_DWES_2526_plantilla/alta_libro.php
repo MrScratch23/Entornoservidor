@@ -3,12 +3,6 @@
     Autor: P.Lluyot
     Examen-1 de DWES - Curso 2025-2026
 -->
-
-<!-- 
-    Página de alta de libros de la Biblioteca Local
-    Autor: P.Lluyot
-    Examen-1 de DWES - Curso 2025-2026
--->
 <?php
 /* ############################## CÓDIGO PHP ################################################
 
@@ -58,11 +52,11 @@ $mensajeError = "";
 $archivo = "libros.csv";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar'])) {
-    // sanitizo los datos
-    $titulo = htmlspecialchars(trim($_GET['titulo'])) ?? '';
-    $autor = htmlspecialchars(trim($_GET['autor'])) ?? '';
-    $aniopublicacion = $_GET['anio'] ?? '';
-    $genero = htmlspecialchars(trim($_GET['genero'])) ?? '';
+    // CORREGIDO: Usar $_POST en lugar de $_GET
+    $titulo = htmlspecialchars(trim($_POST['titulo'] ?? ''));
+    $autor = htmlspecialchars(trim($_POST['autor'] ?? ''));
+    $aniopublicacion = $_POST['anio'] ?? '';
+    $genero = htmlspecialchars(trim($_POST['genero'] ?? ''));
 
     // compruebo los errores, guardandolos en el array
     if (empty($titulo)) {
@@ -74,27 +68,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar'])) {
 
     if (empty($aniopublicacion)) {
         $errores['anio'] = "Debe introducir un año";
-    }
-    $anioPlub = intval($aniopublicacion);
-
-    if (validarNumero($anioPlub, 1800, 2100)) {
-        $errores['anio'] = "La fecha debe estar comprendida entre 1800-2100";
+    } else {
+        $anioPlub = intval($aniopublicacion);
+       
+        if (!validarNumero($anioPlub, 1800, 2100)) {
+            $errores['anio'] = "La fecha debe estar comprendida entre 1800-2100";
+        }
     }
 
     if (empty($genero)) {
         $errores['genero'] = "El genero no puede estar vacio";
+    } else {
+        //  Usar and en lugar de or
+        if ($genero != "Novela" && $genero != "Ciencia ficción" && $genero != "Fantasía") {
+            $errores['genero'] = "El genero introducido debe ser uno de los permitidos: Novela - Ciencia ficcion - Fantasía";
+        }
     }
-
-    if ($genero != "Novela" || $genero != "Ciencia ficción" || $genero != "Fantasía") {
-        $errores['genero'] = "El genero introducido debe ser uno de los permitidos: Novela - Ciencia ficcion - Fantasía";
-    }
-
-
-
 
     // creo el array de libros con los datos del formulario
     $libro = [$titulo, $autor, $anioPlub, $genero];
-
 
     // booleano de control
     $hayErrores = false;
@@ -108,13 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar'])) {
     if (!$hayErrores) {
         if (guardarArrayAsociativoCSV($archivo, $libro)) {
             $mensajeExito = "Libro guardado con exito.";
+            // Limpiar campos después del éxito
+            $titulo = $autor = $aniopublicacion = $genero = "";
         } else {
             $mensajeError = "No se pudo guardar el libro correctamente.";
         }
     }
 }
-
-
 ?>
 <!DOCTYPE html>
 <html lang='es'>
@@ -141,10 +133,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar'])) {
     </header>
     <!-- Contenido principal: formulario de alta de libros -->
     <main>
-        <form>
+        <form method="post">
             <p>
                 <!-- Campo para el título del libro -->
-                <!-- Mostrar los errores si los hubiese con un campo span-->
                 <label for="titulo">Título del libro</label>
                 <input type="text" id="titulo" name="titulo" value="<?php echo htmlspecialchars($titulo); ?>" size="40">
                 <!-- Mostrar los errores si los hubiese con un campo span-->
@@ -152,20 +143,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar'])) {
 
                 <!-- Campo para el autor del libro -->
                 <label for="autor">Autor</label>
-                <input type="text" id="autor" name="autor" value="<?php echo htmlspecialchars($autor); ?>" valuesize="40">
+                <input type="text" id="autor" name="autor" value="<?php echo htmlspecialchars($autor); ?>" size="40">
                 <?php if (!empty($errores['autor'])) echo "<span class='error'>{$errores['autor']}</span>"; ?>
 
                 <!-- Campo para el año de publicación -->
                 <label for="anio">Año de publicación</label>
-                <input type="number" id="anio" name="anio" value="<?php echo htmlspecialchars($anio); ?>" valuesize="40">
+                <input type="number" id="anio" name="anio" value="<?php echo htmlspecialchars($aniopublicacion); ?>" size="40">
                 <?php if (!empty($errores['anio'])) echo "<span class='error'>{$errores['anio']}</span>"; ?>
+
                 <!-- Campo para el género del libro -->
                 <label for="genero">Género</label>
                 <select id="genero" name="genero">
                     <option value="">Selecciona un género</option>
-                    <option value="Novela">Novela</option>
-                    <option value="Ciencia ficción">Ciencia ficción</option>
-                    <option value="Fantasía">Fantasía</option>
+                    <option value="Novela" <?php echo ($genero == "Novela") ? "selected" : ""; ?>>Novela</option>
+                    <option value="Ciencia ficción" <?php echo ($genero == "Ciencia ficción") ? "selected" : ""; ?>>Ciencia ficción</option>
+                    <option value="Fantasía" <?php echo ($genero == "Fantasía") ? "selected" : ""; ?>>Fantasía</option>
                 </select>
                 <?php if (!empty($errores['genero'])) echo "<span class='error'>{$errores['genero']}</span>"; ?>
             </p>
@@ -176,18 +168,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar'])) {
         </form>
         <!-- Mensaje de notificación o resultado -->
         <p class='notice'>
-            <?php if (isset($mensajeExito)): ?>
-
-                <?php echo $mensajeExito; ?>
-
+            <?php if (!empty($mensajeExito)): ?>
+                <span style="color: green;"><?php echo $mensajeExito; ?></span>
             <?php endif; ?>
 
-            <?php if (isset($mensajeError)): ?>
-
-                <?php echo $mensajeError; ?>
-
+            <?php if (!empty($mensajeError)): ?>
+                <span style="color: red;"><?php echo $mensajeError; ?></span>
             <?php endif; ?>
-
         </p>
     </main>
     <footer>
