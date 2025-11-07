@@ -9,6 +9,8 @@ if (!isset($_SESSION['usuario'])) {
     exit();
 }
 
+
+
     $puntos=  $_SESSION['puntos'];
     $aciertos= $_SESSION['aciertos'];
     $fallos= $_SESSION['fallos'];
@@ -16,6 +18,11 @@ if (!isset($_SESSION['usuario'])) {
     $usuario = $_SESSION['usuario'];
     $mensaje = "";
     $archivoFichero = "registro.txt";
+
+    if ($turnos<5) {
+        header("Location:index.php", true, 302);
+        exit();
+    }
 
        
     $usuarioRegistro = [$usuario, $puntos, $aciertos, date('Y-m-d')];

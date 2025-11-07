@@ -82,7 +82,7 @@ $personaje = $_SESSION['personaje'];
         if ($accion === "pasar" && $personaje['impostor'] === 1) {
             $_SESSION['puntos']-=5;
             $_SESSION['fallos']++;
-            $_SESSION['mensajeError'] = "El personaje era un amongus";
+            $_SESSION['mensajeError'] = "El personaje era un amongus, pierdes cinco puntos";
         }
         if ($accion === "pasar" && $personaje['impostor'] === 0) {
             $_SESSION['puntos']+=10;
@@ -98,7 +98,7 @@ $personaje = $_SESSION['personaje'];
         if ($accion === "rechazar" && $personaje['impostor']===0) {
             $_SESSION['fallos']++;
             $_SESSION['puntos']-=5;
-          $_SESSION['mensajeError'] = "El personaje no era un impostor,";
+          $_SESSION['mensajeError'] = "El personaje no era un impostor, pierdes cinco puntazos";
         }
 
         $_SESSION['turnos']++;
