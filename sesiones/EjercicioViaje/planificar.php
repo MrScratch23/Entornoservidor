@@ -15,8 +15,23 @@ $errores = [];
 $mensajeSelect = "";
 
 
-$listaMensaje = "<ul>";
 
+
+
+$listaMensaje = "<ul>";
+// bucle para mostrar las actividades por dia
+for ($i = 0; $i < count($actividades); $i++) {
+    $listaMensaje .= "<li><strong>Día " . ($i + 1) . ":</strong><ul>";
+    if (is_array($actividades[$i]) && count($actividades[$i]) > 0) {
+        foreach ($actividades[$i] as $actividad) {
+            $listaMensaje .= "<li>" . htmlspecialchars($actividad) . "</li>";
+        }
+    } else {
+        $listaMensaje .= "<li>No hay actividades planificadas.</li>";
+    }
+    $listaMensaje .= "</ul></li>";
+
+}
 $listaMensaje .= "</ul>";
 
 
@@ -82,13 +97,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
     <h4>Lista de actividades:</h4>
 
-    <p class="notice">
+    
    <?php
    echo $listaMensaje;
    ?>
 
 
-    </p>
+    
 
 
 
