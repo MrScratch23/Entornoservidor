@@ -19,9 +19,11 @@ exit;
     <title>Document</title>
 </head>
 <body>
-    <label>Pon lo que se pida:<br>
-    <button id="elemento" type="button">Pon lo que quieras</button>
-    </label>
     
+  
+   <form action="index.php" method="get">
+    <button type="submit">Reiniciar planificación</button>
+   </form>
+
 </body>
 </html>
