@@ -1,6 +1,15 @@
 
+
+
 <?php
+session_start();
+session_unset();
+session_destroy();
+header('Location: index.php');
+exit;
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -10,6 +19,9 @@
     <title>Document</title>
 </head>
 <body>
+    <label>Pon lo que se pida:<br>
+    <button id="elemento" type="button">Pon lo que quieras</button>
+    </label>
     
 </body>
 </html>
