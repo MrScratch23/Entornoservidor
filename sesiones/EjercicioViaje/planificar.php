@@ -14,13 +14,19 @@ $errores = [];
 
 $mensajeSelect = "";
 
+
+$listaMensaje = "<ul>";
+
+$listaMensaje .= "</ul>";
+
+
 for ($i=0; $i < count($actividades) ; $i++) { 
-$mensajeSelect .= '<option value="' . htmlspecialchars($actividades[$i]) . '">' . htmlspecialchars($actividades[$i]) . '</option>';
+$mensajeSelect .= '<option value="' .$i. '">' . htmlspecialchars($actividades[$i]) . '</option>';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $actividad = $_POST['actividad'] ?? 'actividad';
-    $diaActividad = $_POST['actividad'] ?? 'actividad';
+    $actividad = $_POST['actividad'] ?? '';
+    $diaActividad = $_POST['diaActividad'] ?? '';
 
 
     if (empty($actividad)) {
@@ -32,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errores)) {
-    $_SESSION['viaje']['itinerario'][$diaActividad][] = $activida;
+    $_SESSION['viaje']['itinerario'][$diaActividad][]= $actividad;
 
     }
 
@@ -70,10 +76,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo $mensajeSelect;
     ?>
       </select>
+      
+      <button id="agregar" type="submit">Agregar tareas</button>
+    
     </form>
     <h4>Lista de actividades:</h4>
 
-    <p class="notice"></p>
+    <p class="notice">
+   <?php
+   echo $listaMensaje;
+   ?>
+
+
+    </p>
 
 
 

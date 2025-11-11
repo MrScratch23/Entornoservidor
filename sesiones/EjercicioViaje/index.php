@@ -75,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!empty($errores)) {
             echo $errores;
         }
+        
         ?>
         No hay viajes programados.
     </p>
