@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 
@@ -14,15 +13,11 @@ $errores = [];
 
 $mensajeSelect = "";
 
-
-
-
-
 $listaMensaje = "<ul>";
 // bucle para mostrar las actividades por dia
-for ($i = 0; $i < count($actividades); $i++) {
+for ($i = 0; $i < $dias; $i++) {
     $listaMensaje .= "<li><strong>Día " . ($i + 1) . ":</strong><ul>";
-    if (is_array($actividades[$i]) && count($actividades[$i]) > 0) {
+    if (isset($actividades[$i]) && is_array($actividades[$i]) && count($actividades[$i]) > 0) {
         foreach ($actividades[$i] as $actividad) {
             $listaMensaje .= "<li>" . htmlspecialchars($actividad) . "</li>";
         }
@@ -30,41 +25,33 @@ for ($i = 0; $i < count($actividades); $i++) {
         $listaMensaje .= "<li>No hay actividades planificadas.</li>";
     }
     $listaMensaje .= "</ul></li>";
-
 }
 $listaMensaje .= "</ul>";
 
-
-for ($i=0; $i < count($actividades) ; $i++) { 
-$mensajeSelect .= '<option value="' .$i. '">' . htmlspecialchars($actividades[$i]) . '</option>';
+// Generar opciones para el select
+for ($i = 0; $i < $dias; $i++) { 
+    $mensajeSelect .= '<option value="' . $i . '">Día ' . ($i + 1) . '</option>';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $actividad = $_POST['actividad'] ?? '';
+    $actividad = trim($_POST['actividad'] ?? '');
     $diaActividad = $_POST['diaActividad'] ?? '';
 
-
     if (empty($actividad)) {
-        $errores['actividad'] = "La actividad no puede estar vacio.";
+        $errores['actividad'] = "La actividad no puede estar vacío.";
     }
 
-    if (empty($diaActividad)) {
-        $errores ['diaActividad'] = "Los dias no pueden estar vacios.";
+    if ($diaActividad === '') {
+        $errores['diaActividad'] = "Debe seleccionar un día.";
     }
 
     if (empty($errores)) {
-    $_SESSION['viaje']['itinerario'][$diaActividad][]= $actividad;
-
+        $_SESSION['viaje']['itinerario'][$diaActividad][] = $actividad;
+        // Recargar la página para mostrar la nueva actividad
+        header("Location: planificar.php");
+        exit();
     }
-
-
-
-
 }
-
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -77,35 +64,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
-  <h2>Planificando tu viaje a <?php
-   echo "$destino Dias: $dias" ;
-    ?></h2>
+  <h2>Planificando tu viaje a <?php echo htmlspecialchars($destino) . " - Días: " . $dias; ?></h2>
     
     <form action="planificar.php" method="post">
-      <label for="actividades">Nueva actividad:</label>
+      <label for="actividad">Nueva actividad:</label>
       <input type="text" id="actividad" name="actividad" required>  
       <br>
    
-      <select id="diaActividad" name="diaActividad">
-    <?php
-    echo $mensajeSelect;
-    ?>
+      <label for="diaActividad">Seleccionar día:</label>
+      <select id="diaActividad" name="diaActividad" required>
+        <option value="">Seleccione un día</option>
+        <?php echo $mensajeSelect; ?>
       </select>
+      <br>
       
-      <button id="agregar" type="submit">Agregar tareas</button>
+      <button type="submit">Agregar actividad</button>
     
     </form>
-    <h4>Lista de actividades:</h4>
 
-    
-   <?php
-   echo $listaMensaje;
-   ?>
+    <?php if (!empty($errores)): ?>
+        <div class="error">
+            <?php foreach ($errores as $error): ?>
+                <p><?php echo $error; ?></p>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 
+    <h4>Itinerario de tu viaje:</h4>
+    <?php echo $listaMensaje; ?>
 
-    
-
-
+    <br>
+   
 
 </body>
 </html>

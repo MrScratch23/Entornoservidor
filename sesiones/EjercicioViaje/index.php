@@ -6,8 +6,7 @@ $errores = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
    $destino = htmlspecialchars(trim($_POST['destino'])) ?? '';
-   $diasForm = $_POST['dias'] ?? 'dias';
-
+   $diasForm = $_POST['dias'] ?? '';
 
    if (is_numeric($diasForm)) {
        $dias = intval($diasForm);
@@ -15,17 +14,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
        $errores['dias'] = "Introduzca un día válido.";
    }
 
-
    if (empty($destino)) {
        $errores['destino'] = "El destino no puede estar vacío.";
    }
-
 
    if (empty($dias) || $dias < 1) {
        $errores['dias'] = "Los días no pueden estar vacíos o deben ser más de un día.";
    }
 
-  
    if (empty($errores)) {
        $_SESSION['viaje'] = [
            'destino' => $destino,
@@ -33,17 +29,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
            'itinerario' => []
        ];
 
-       // Crear el itinerario con los días
+       // Crear el itinerario con arrays vacíos para cada día
        for ($i = 0; $i < $dias; $i++) {
-           $_SESSION['viaje']['itinerario'][] = "Día: " . ($i + 1); 
+           $_SESSION['viaje']['itinerario'][$i] = []; // Array vacío para cada día
        }
 
-      
        header("Location: planificar.php", true, 302);
        exit();
-   } else {
-    
-       $errores = "Error al cargar los datos.";
    }
 }
 
@@ -62,10 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <form action="index.php" method="post">
         <label for="destino">Destino:</label>
-        <input type="text" id="destino" name="destino">
+        <input type="text" id="destino" name="destino" value="<?php echo isset($_POST['destino']) ? htmlspecialchars($_POST['destino']) : ''; ?>">
         <br>
         <label for="dias">Número de días:</label>
-        <input type="number" id="dias" name="dias">
+        <input type="number" id="dias" name="dias" value="<?php echo isset($_POST['dias']) ? htmlspecialchars($_POST['dias']) : ''; ?>">
         <br>
         <input type="submit" value="Planificar Viaje">
     </form>
@@ -73,11 +65,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <p class="notice">
         <?php
         if (!empty($errores)) {
-            echo $errores;
+            foreach ($errores as $error) {
+                echo $error . "<br>";
+            }
+        } else {
+            echo "No hay viajes programados.";
         }
-        
         ?>
-        No hay viajes programados.
     </p>
 </body>
 </html>

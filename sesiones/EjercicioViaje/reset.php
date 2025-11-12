@@ -22,7 +22,7 @@ exit;
     
   
    <form action="index.php" method="get">
-    <button type="submit">Reiniciar planificación</button>
+ <a href="reset.php">Reiniciar planificación</a>
    </form>
 
 </body>
