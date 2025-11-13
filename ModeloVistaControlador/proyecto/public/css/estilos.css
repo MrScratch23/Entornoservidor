@@ -1,0 +1,26 @@
+body { font-family: sans-serif; margin: 0; display: flex; flex-direction: column; min-height: 100vh; background-color: #f4f4f4; }
+
+.site-header { background: #2c3e50; color: white; padding: 1rem; text-align: center; }
+.site-header a { color: #ecf0f1; text-decoration: none; margin: 0 15px; font-weight: bold; }
+.site-header a:hover { color: #3498db; }
+
+/* FIX: Estilos para que el menú se vea horizontal y sin viñetas */
+.site-header nav ul {
+    list-style: none; /* Elimina las viñetas */
+    padding: 0; /* Elimina el padding por defecto del ul */
+    margin: 0.5rem 0 0 0; /* Separa ligeramente del h1 */
+    display: flex; /* Usa Flexbox para la alineación horizontal */
+    justify-content: center; /* Centra los enlaces en el header */
+    gap: 15px; /* Añade espacio entre los elementos del menú */
+}
+/* No es necesario tocar los li, el flexbox en el ul se encarga. */
+
+.contenedor-principal { flex: 1; padding: 2rem; max-width: 800px; margin: 0 auto; width: 100%; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+
+.caja-destacada { padding: 15px; background-color: #f9f9f9; border-left: 5px solid #e74c3c; margin-top: 20px; }
+
+.formulario-contacto input, .formulario-contacto textarea { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+.formulario-contacto button { background: #3498db; color: white; border: none; padding: 10px 20px; cursor: pointer; margin-top: 10px; }
+.formulario-contacto button:hover { background: #2980b9; }
+
+.site-footer { background: #333; color: #aaa; text-align: center; padding: 1rem; margin-top: auto; }
