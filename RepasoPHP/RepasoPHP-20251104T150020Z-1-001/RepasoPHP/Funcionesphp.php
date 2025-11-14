@@ -514,8 +514,7 @@ function valoresAleatorios($array, $cantidad = 1) {
     
     return $resultado;
 }
-
-
+?>
 // ==================== EJEMPLOS DE USO ====================
 
 /*
@@ -554,7 +553,7 @@ $mensaje .= arrayATabla($usuario, 'Usuario Tabla');
 subirArchivo($_FILES['archivo'], $carpeta, 'nuevo_nombre');
 */
 
-/* Array indexado
+/*Array indexado
 $frutas = ['manzana', 'banana', 'naranja', 'uva'];
 echo valorAleatorio($frutas); // Ej: "banana"
 
