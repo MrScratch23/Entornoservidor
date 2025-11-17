@@ -16,39 +16,41 @@
 # ############################# FIN CÓDIGO PHP ############################################## */
 
 // ================= Apartado 4: Funciones PHP (1 punto) ======================================
-function cargarLibros($archivo) {
-    $libros = [];
-    if (!file_exists($archivo)) return $libros;
+function arrayATabla($array, $titulo = '') {
+    if (empty($array)) return "<p>No hay datos</p>";
     
-    $manejador = fopen($archivo, "r");
-    if ($manejador) {
-        // Saltar la primera línea (encabezados)
-        fgetcsv($manejador, 0, ';');
-        
-        while (($datos = fgetcsv($manejador, 0, ';')) !== FALSE) {
-            if (!empty($datos) && count($datos) >= 4) {
-                $libros[] = $datos;
-            }
-        }
-        fclose($manejador);
-    }
-    return $libros;
-}
-
-function generarTablaLibros($libros) {
-    if (empty($libros)) {
-        return "<p>No hay libros registrados</p>";
+    $html = '';
+    if ($titulo) {
+        $html .= "<h3>$titulo</h3>";
     }
     
-    $html = '<table border="1">';
-    $html .= '<tr><th>Título</th><th>Autor</th><th>Año</th><th>Género</th></tr>';
+    $html .= '<table border="1" style="border-collapse: collapse; width: 100%;">';
     
-    foreach ($libros as $libro) {
+    // Detectar si es array de arrays
+    $esMultidimensional = is_array($array[0] ?? null);
+    
+    if ($esMultidimensional) {
+        // Generar encabezados desde las keys del primer elemento
         $html .= '<tr>';
-        $html .= '<td>' . htmlspecialchars($libro[0]) . '</td>';
-        $html .= '<td>' . htmlspecialchars($libro[1]) . '</td>';
-        $html .= '<td>' . htmlspecialchars($libro[2]) . '</td>';
-        $html .= '<td>' . htmlspecialchars($libro[3]) . '</td>';
+        foreach (array_keys($array[0]) as $header) {
+            $html .= "<th style='padding: 8px;'>" . htmlspecialchars($header) . "</th>";
+        }
+        $html .= '</tr>';
+        
+        // Generar filas
+        foreach ($array as $fila) {
+            $html .= '<tr>';
+            foreach ($fila as $valor) {
+                $html .= "<td style='padding: 8px;'>" . htmlspecialchars($valor) . "</td>";
+            }
+            $html .= '</tr>';
+        }
+    } else {
+        // Array simple
+        $html .= '<tr>';
+        foreach ($array as $valor) {
+            $html .= "<td style='padding: 8px;'>" . htmlspecialchars($valor) . "</td>";
+        }
         $html .= '</tr>';
     }
     
@@ -56,11 +58,60 @@ function generarTablaLibros($libros) {
     return $html;
 }
 
+function cargarDatosSUPER($archivo, $formato = 'indexado')
+{
+    $datos = [];
+    if (!file_exists($archivo)) return $datos;
+    
+    $manejador = @fopen($archivo, "r");
+    if ($manejador) {
+        // Leer primera línea para detectar encabezados - USANDO PUNTO Y COMO
+        $primeraLinea = fgetcsv($manejador, 0, ';');
+        if ($primeraLinea === false) {
+            fclose($manejador);
+            return $datos;
+        }
+        
+        // Verificar si la primera línea parece encabezados (no numérica)
+        $tieneEncabezados = false;
+        if ($formato === 'auto') {
+            $tieneEncabezados = !is_numeric(trim($primeraLinea[0]));
+        }
+        
+        // Si tiene encabezados, procesar de forma asociativa
+        if ($tieneEncabezados) {
+            $encabezados = $primeraLinea;
+            while (!feof($manejador)) {
+                $temp = fgetcsv($manejador, 0, ';'); // USANDO PUNTO Y COMO
+                if ($temp === false || (count($temp) === 1 && empty(trim($temp[0])))) continue;
+                
+                $fila = [];
+                foreach ($encabezados as $index => $encabezado) {
+                    $fila[trim($encabezado)] = $temp[$index] ?? '';
+                }
+                $datos[] = $fila;
+            }
+        } else {
+            // Si no tiene encabezados, procesar como indexado
+            $datos[] = $primeraLinea; // Guardar la primera línea también
+            while (!feof($manejador)) {
+                $temp = fgetcsv($manejador, 0, ';'); // USANDO PUNTO Y COMO
+                if ($temp === false || (count($temp) === 1 && empty(trim($temp[0])))) continue;
+                $datos[] = $temp;
+            }
+        }
+        
+        fclose($manejador);
+    }
+    return $datos;
+}
+
+
 // Código principal
 $archivo = "libros.csv";
 
 // ================= Apartado 3: Lectura de fichero y generación de tabla (2 puntos) ==========
-$libros = cargarLibros($archivo);
+$libros = cargarDatosSUPER($archivo, 'auto');
 
 // ================= Apartado 5: Filtro por género (1,5 puntos) ===============================
 $genero_filtro = isset($_GET['genero']) ? $_GET['genero'] : 'Todos';
@@ -71,7 +122,7 @@ $genero_filtro = in_array($genero_filtro, $generos_permitidos) ? $genero_filtro 
 if ($genero_filtro !== 'Todos') {
     $libros_filtrados = [];
     foreach ($libros as $libro) {
-        if ($libro[3] === $genero_filtro) {
+        if (isset($libro['Género']) && $libro['Género'] === $genero_filtro) {
             $libros_filtrados[] = $libro;
         }
     }
@@ -88,8 +139,8 @@ $estadisticas_generos = [
 ];
 
 foreach ($libros as $libro) {
-    if (isset($estadisticas_generos[$libro[3]])) {
-        $estadisticas_generos[$libro[3]]++;
+    if (isset($libro['Género']) && isset($estadisticas_generos[$libro['Género']])) {
+        $estadisticas_generos[$libro['Género']]++;
     }
 }
 ?>
@@ -132,7 +183,7 @@ foreach ($libros as $libro) {
         </form>
 
         <!-- ================= Apartado 3: Tabla HTML de libros ============================= -->
-        <?= generarTablaLibros($libros_filtrados) ?>
+        <?= arrayATabla($libros_filtrados) ?>
 
         <!-- ================= Apartado 6: Estadísticas ==================================== -->
         <section>

@@ -27,7 +27,7 @@ function guardarArrayAsociativoCSV($archivo, $arrayAsociativo)
   // funcion para guardar un array asociativo en un archivo CSV
     $manejador = @fopen($archivo, "a+");
     if ($manejador) {
-        fputcsv($manejador, $arrayAsociativo);
+        fputcsv($manejador, $arrayAsociativo,";");
         fclose($manejador);
         return true;
     }
