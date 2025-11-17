@@ -1,8 +1,11 @@
-
 <?php
 session_start();
 include "datos_musica.php";
 
+// Inicializar carrito si no existe - FORZAR que sea array
+if (!isset($_SESSION['carrito']) || !is_array($_SESSION['carrito'])) {
+    $_SESSION['carrito'] = [];
+}
 
 function eliminarDelArray(&$array, $valor) {
     $clave = array_search($valor, $array, true);
@@ -14,72 +17,100 @@ function eliminarDelArray(&$array, $valor) {
     return false;
 }
 
+function arrayATabla($array, $titulo = '') {
+    if (empty($array)) return "<p>No hay datos</p>";
+    
+    $html = '';
+    if ($titulo) {
+        $html .= "<h3>$titulo</h3>";
+    }
+    
+    $html .= '<table border="1" style="border-collapse: collapse; width: 100%;">';
+    
+    // Detectar si es array de arrays
+    $esMultidimensional = is_array($array[0] ?? null);
+    
+    if ($esMultidimensional) {
+        // Generar encabezados desde las keys del primer elemento
+        $html .= '<tr>';
+        foreach (array_keys($array[0]) as $header) {
+            $html .= "<th style='padding: 8px; background: #f0f0f0;'>" . htmlspecialchars($header) . "</th>";
+        }
+        $html .= "<th style='padding: 8px; background: #f0f0f0;'>Acción</th>";
+        $html .= '</tr>';
+        
+        // Generar filas
+        foreach ($array as $fila) {
+            $html .= '<tr>';
+            foreach ($fila as $valor) {
+                $html .= "<td style='padding: 8px;'>" . htmlspecialchars($valor) . "</td>";
+            }
+            // Añadir botón de "Añadir al carrito"
+            $html .= '<td style="padding: 8px;">';
+            $html .= '<form method="post" style="display: inline; margin: 0;">';
+            $html .= '<input type="hidden" name="añadir" value="' . htmlspecialchars($fila['id']) . '">';
+            $html .= '<button type="submit" style="padding: 4px 8px; cursor: pointer;">Añadir al carrito</button>';
+            $html .= '</form>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+    } else {
+        // Array simple
+        $html .= '<tr>';
+        foreach ($array as $valor) {
+            $html .= "<td style='padding: 8px;'>" . htmlspecialchars($valor) . "</td>";
+        }
+        $html .= '</tr>';
+    }
+    
+    $html .= '</table>';
+    return $html;
+}
 
-
-
-function mostrarTabla($canciones) {
-    $tablaHTML = "<table>
-    <thead>
-        <tr>
-            <th>ID Canción</th>
-            <th>Título</th>
-            <th>Artista</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>";
-
-    foreach ($canciones as $cancion) {
-        $tablaHTML .= "<tr>
-                    <td>{$cancion['id']}</td>
-                    <td>{$cancion['titulo']}</td>
-                    <td>{$cancion['artista']}</td>
-                    <td>
-                        <form action='tienda.php' method='POST'>
-                            <button type='submit' style='color: blue' name='añadir' value='{$cancion['id']}'>Agregar Canción</button>
-                            <button type='submit' name='remover' style='color: red' value='{$cancion['id']}'>Eliminar Canción</button>
-                        </form>
-                    </td>
-                   </tr>";
+// Procesar POST requests
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // DEBUG: Verificar el estado del carrito
+    error_log("Carrito antes de procesar: " . print_r($_SESSION['carrito'], true));
+    
+    if (isset($_POST['añadir'])) {
+        $id_cancion = $_POST['añadir'];
+        
+        // Asegurarnos de que el carrito es un array
+        if (!is_array($_SESSION['carrito'])) {
+            $_SESSION['carrito'] = [];
+        }
+        
+        // Añadir al carrito (evitar duplicados)
+        if (!in_array($id_cancion, $_SESSION['carrito'])) {
+            $_SESSION['carrito'][] = $id_cancion;
+            $_SESSION['msg_flash'] = "Añadida canción al carrito";
+        } else {
+            $_SESSION['msg_flash'] = "La canción ya está en el carrito";
+        }
+        
+        header('Location: tienda.php'); 
+        exit(); 
     }
 
-    $tablaHTML .= "</tbody>
-              </table>";
-
-    return $tablaHTML; 
+    if (isset($_POST['remover'])) {
+        $id_cancion = $_POST['remover'];
+        
+        // Asegurarnos de que el carrito es un array
+        if (!is_array($_SESSION['carrito'])) {
+            $_SESSION['carrito'] = [];
+        }
+        
+        if (eliminarDelArray($_SESSION['carrito'], $id_cancion)) {
+            $_SESSION['msg_flash'] = "Quitada canción del carrito";
+        }
+        header('Location: tienda.php'); 
+        exit();
+    }
 }
 
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $carrito = [];
-
-    if (isset($_POST['añadir'])) {
-    $id_cancion = $_POST['añadir'];
-    $carrito = $id_cancion;
-
-    $_SESSION['carrito'] = $carrito;
-    $_SESSION['msg_flash'] = "Añadida cancion al carrito";
-    header('Location: tienda.php'); 
-    exit(); 
-}
-
-if (isset($_POST['remover'])) {
-    $id_cancion = $_POST['remover'];
-    eliminarDelArray($carrito, $id_cancion);
-    $_SESSION_['carrito'] = $carrito;
-     $_SESSION['msg_flash'] = "Quitada cancion del carrito";
-    header('Location: tienda.php'); 
-    exit();
-}
-
-}
-
-
-
-
+// DEBUG: Verificar estado final del carrito
+error_log("Carrito final: " . print_r($_SESSION['carrito'], true));
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -90,27 +121,24 @@ if (isset($_POST['remover'])) {
 </head>
 <body>
     <h1>Bienvenido a la Tienda de Música</h1>
-
     
     <div id="flash-message">
-    
-    <?php
-    if (isset($_SESSION['msg_flash'])) {
-        echo $_SESSION['msg_flash'];
-    }
-    ?>
+        <?php
+        if (isset($_SESSION['msg_flash'])) {
+            echo "<p>" . $_SESSION['msg_flash'] . "</p>";
+            unset($_SESSION['msg_flash']); // Limpiar el mensaje después de mostrarlo
+        }
+        ?>
     </div>
 
     <h2>Categoría: Canciones Disponibles</h2>
     <?php
-    echo mostrarTabla($canciones);  
-    
+    echo arrayATabla($canciones, "Lista de canciones");  
     ?>
     
-  
-   
-
     <br>
     <a href="carrito.php">Ver mi carrito</a>
+    
+   
 </body>
 </html>

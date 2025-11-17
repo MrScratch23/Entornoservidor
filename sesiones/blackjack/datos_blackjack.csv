@@ -1,0 +1,17 @@
+usuario,puntuacion,resultado,cartas,intentos
+juan_perez,18,perdio,"A♥,7♦,K♠",3
+maria_garcia,21,gano,"J♥,A♦",2
+carlos_lopez,19,perdio,"10♣,9♥",2
+ana_martinez,17,perdio,"8♦,9♠",2
+pedro_rodriguez,20,gano,"K♥,Q♦",2
+laura_sanchez,22,perdio,"5♠,7♥,10♦",3
+david_fernandez,16,perdio,"9♣,7♠",2
+elena_gomez,21,gano,"A♠,J♣,Q♥",3
+miguel_ruiz,19,perdio,"6♦,K♣,3♥",3
+isabel_diaz,18,plantado,"9♥,9♦",2
+juan_perez,20,gano,"10♥,J♦",2
+maria_garcia,23,perdio,"8♠,7♣,8♥",3
+carlos_lopez,17,perdio,"Q♠,7♦",2juan,29,perdió,"Q♥,6♠,3♠,10♣",1
+juan,31,perdió,"Q♥,6♠,3♠,10♣,2♦",1
+juan,31,plantado,"Q♥,6♠,3♠,10♣,2♦",0
+juan,0,plantado,,0
