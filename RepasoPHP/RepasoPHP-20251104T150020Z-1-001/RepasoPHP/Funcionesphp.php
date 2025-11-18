@@ -15,6 +15,32 @@ function validarNumero($numero, $min = null, $max = null) {
 
 // ==================== FUNCIONES PARA ARRAYS INDEXADOS ====================
 
+// para indexado txt
+function leerArchivoIndexado($archivo, $delimitador = '|') {
+    if (!file_exists($archivo)) return [];
+    
+    $manejador = fopen($archivo, "r");
+    if (!$manejador) return [];
+    
+    $datos = [];
+    
+    while (!feof($manejador)) {
+        $linea = fgets($manejador);
+        if ($linea === false) continue;
+        
+        $linea = trim($linea);
+        if (empty($linea)) continue;
+        
+        $partes = explode($delimitador, $linea);
+        
+        // ✅ GENÉRICO: Devuelve array indexado simple
+        $datos[] = $partes;
+    }
+    
+    fclose($manejador);
+    return $datos;
+}
+
 function eliminarDelArray(&$array, $valor) {
     $clave = array_search($valor, $array, true);
     if ($clave !== false) {
@@ -33,7 +59,7 @@ function guardarArrayIndexadoTXT($archivo, $arrayIndexado) {
 
 // Guardar array indexado en CSV
 function guardarArrayIndexadoCSV($archivo, $arrayIndexado) {
-    $handle = fopen($archivo, 'a');
+    $handle = @fopen($archivo, 'a');
     fputcsv($handle, $arrayIndexado);
     fclose($handle);
     return true;
@@ -157,55 +183,16 @@ function valorExiste($archivo, $valor) {
     return false;
 }
 
-function cargarDatos($archivo)
-{
-    //array que devolveremos con los datos de todos los usuarios.
-    $usuarios = [];
-    $temp = []; // array temporal
-    if (!file_exists($archivo)) return $usuarios; //salimos si no encuentra el archivo.
-    $manejador = @fopen($archivo, "r");
-    if ($manejador) { //si no da error al abrirlo
-        while (!feof($manejador)) {
-            $temp = fgetcsv($manejador);
-            if ($temp == false || count($temp) < 3) continue; //si no hay datos o son menos de 3 campos
-            else $usuarios[$temp[0]] = ["password" => $temp[1], "contador" => intval($temp[2])];
-        }
 
-        fclose($manejador);
-    }
-    return $usuarios;
-}
-
-
-function cargarDatosGenerica($archivo)
-{
-    //array que devolveremos con los datos de todos los usuarios.
-    $usuarios = [];
-    $temp = []; // array temporal
-    if (!file_exists($archivo)) return $usuarios; //salimos si no encuentra el archivo.
-    $manejador = @fopen($archivo, "r");
-    if ($manejador) { //si no da error al abrirlo
-        while (!feof($manejador)) {
-            $temp = fgetcsv($manejador);
-            if ($temp == false || count($temp) < 3) continue; //si no hay datos o son menos de 3 campos
-            else $usuarios[$temp[0]] = ["password" => $temp[1], "contador" => intval($temp[2])];
-        }
-
-        fclose($manejador);
-    }
-    return $usuarios;
-}
-
-
-function cargarDatosSUPER($archivo, $formato = 'indexado')
+function cargarDatosSUPER($archivo, $formato = 'indexado', $delimitador = ',')
 {
     $datos = [];
     if (!file_exists($archivo)) return $datos;
     
     $manejador = @fopen($archivo, "r");
     if ($manejador) {
-        // Leer primera línea para detectar encabezados
-        $primeraLinea = fgetcsv($manejador);
+        // Leer primera línea con el delimitador personalizado
+        $primeraLinea = fgetcsv($manejador, 0, $delimitador);
         if ($primeraLinea === false) {
             fclose($manejador);
             return $datos;
@@ -221,7 +208,7 @@ function cargarDatosSUPER($archivo, $formato = 'indexado')
         if ($tieneEncabezados) {
             $encabezados = $primeraLinea;
             while (!feof($manejador)) {
-                $temp = fgetcsv($manejador);
+                $temp = fgetcsv($manejador, 0, $delimitador);
                 if ($temp === false || (count($temp) === 1 && empty(trim($temp[0])))) continue;
                 
                 $fila = [];
@@ -234,7 +221,7 @@ function cargarDatosSUPER($archivo, $formato = 'indexado')
             // Si no tiene encabezados, procesar como indexado
             $datos[] = $primeraLinea; // Guardar la primera línea también
             while (!feof($manejador)) {
-                $temp = fgetcsv($manejador);
+                $temp = fgetcsv($manejador, 0, $delimitador);
                 if ($temp === false || (count($temp) === 1 && empty(trim($temp[0])))) continue;
                 $datos[] = $temp;
             }
@@ -242,6 +229,51 @@ function cargarDatosSUPER($archivo, $formato = 'indexado')
         
         fclose($manejador);
     }
+    return $datos;
+}
+
+// en prueba
+
+function cargarArchivoUniversal($archivo, $delimitador = ',', $usarFgetcsv = 'auto') 
+{
+    if (!file_exists($archivo)) return [];
+    
+    // Detectar automáticamente si necesita fgetcsv
+    if ($usarFgetcsv === 'auto') {
+        $contenido = file_get_contents($archivo);
+        $usarFgetcsv = (strpos($contenido, '"') !== false) ? true : false;
+    }
+    
+    if ($usarFgetcsv) {
+        return cargarConFgetcsv($archivo, $delimitador);
+    } else {
+        return cargarConExplode($archivo, $delimitador);
+    }
+}
+
+function cargarConFgetcsv($archivo, $delimitador) {
+    $manejador = fopen($archivo, "r");
+    $datos = [];
+    
+    while (!feof($manejador)) {
+        $fila = fgetcsv($manejador, 0, $delimitador);
+        if ($fila !== false && !empty(array_filter($fila))) {
+            $datos[] = $fila;
+        }
+    }
+    
+    fclose($manejador);
+    return $datos;
+}
+
+function cargarConExplode($archivo, $delimitador) {
+    $lineas = file($archivo, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    $datos = [];
+    
+    foreach ($lineas as $linea) {
+        $datos[] = explode($delimitador, trim($linea));
+    }
+    
     return $datos;
 }
 
@@ -324,29 +356,32 @@ function arrayATabla($array, $titulo = '') {
         $html .= "<h3>$titulo</h3>";
     }
     
-    $html .= '<table border="1">';
+    $html .= '<table border="1" style="border-collapse: collapse; width: 100%;">';
     
-    if (array_is_list($array)) {
+    // Detectar si es array de arrays
+    $esMultidimensional = is_array($array[0] ?? null);
+    
+    if ($esMultidimensional) {
+        // Generar encabezados desde las keys del primer elemento
+        $html .= '<tr>';
+        foreach (array_keys($array[0]) as $header) {
+            $html .= "<th style='padding: 8px; background: #f0f0f0;'>" . htmlspecialchars($header) . "</th>";
+        }
+        $html .= '</tr>';
+        
+        // Generar filas
         foreach ($array as $fila) {
             $html .= '<tr>';
-            if (is_array($fila)) {
-                foreach ($fila as $valor) {
-                    $html .= "<td>$valor</td>";
-                }
-            } else {
-                $html .= "<td>$fila</td>";
+            foreach ($fila as $valor) {
+                $html .= "<td style='padding: 8px;'>" . htmlspecialchars($valor) . "</td>";
             }
             $html .= '</tr>';
         }
     } else {
-        $html .= '<tr>';
-        foreach (array_keys($array) as $header) {
-            $html .= "<th>$header</th>";
-        }
-        $html .= '</tr>';
+        // Array simple
         $html .= '<tr>';
         foreach ($array as $valor) {
-            $html .= "<td>$valor</td>";
+            $html .= "<td style='padding: 8px;'>" . htmlspecialchars($valor) . "</td>";
         }
         $html .= '</tr>';
     }
@@ -515,6 +550,7 @@ function valoresAleatorios($array, $cantidad = 1) {
     return $resultado;
 }
 ?>
+
 // ==================== EJEMPLOS DE USO ====================
 
 /*
@@ -553,7 +589,7 @@ $mensaje .= arrayATabla($usuario, 'Usuario Tabla');
 subirArchivo($_FILES['archivo'], $carpeta, 'nuevo_nombre');
 */
 
-/*Array indexado
+/* Array indexado
 $frutas = ['manzana', 'banana', 'naranja', 'uva'];
 echo valorAleatorio($frutas); // Ej: "banana"
 
@@ -565,4 +601,3 @@ echo valorAleatorioAsociativo($colores); // Ej: "#00FF00"
 $numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 print_r(valoresAleatorios($numeros, 3)); // Ej: [3, 7, 9]
 /*
-?>

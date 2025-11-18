@@ -1,0 +1,15 @@
+Laptop Gaming|1200.00|Electrónicos|15|Laptop potente para gaming con RTX 4060
+Smartphone Samsung|899.99|Electrónicos|30|Teléfono Android con 128GB almacenamiento
+Auriculares Bluetooth|79.50|Audio|45|Auriculares inalámbricos con cancelación de ruido
+Monitor 24" LED|299.99|Electrónicos|20|Monitor Full HD para oficina y gaming
+Teclado Mecánico|129.99|Periféricos|25|Teclado RGB switches azules
+Mouse Inalámbrico|45.75|Periféricos|60|Mouse ergonómico 2400DPI
+Tablet Android|349.00|Electrónicos|18|Tablet 10 pulgadas 64GB
+Impresora Láser|189.99|Oficina|12|Impresora monocromática WiFi
+Silla Gamer|399.00|Muebles|8|Silla ergonómica con soporte lumbar
+Disco SSD 1TB|89.99|Componentes|35|Disco sólido alta velocidad
+Cámara Web HD|59.99|Video|28|Cámara 1080p para streaming
+Altavoz Bluetooth|120.00|Audio|22|Altavoz portátil resistente al agua
+Router WiFi|79.99|Redes|40|Router dual band 1800Mbps
+Smart Watch|199.99|Wearables|15|Reloj inteligente con GPS
+Mochila Laptop|49.95|Accesorios|50|Mochila impermeable para laptop 15
