@@ -1,0 +1,146 @@
+/*
+ * CINE.CSS
+ * Estilos personalizados que amplían simple.css
+ */
+
+
+/* 2. Estilos de la PANTALLA */
+h3 {
+    /* text-align: center; */
+    margin-top: 1rem;
+    /* color: var(--text-light); */
+}
+.info {
+    text-align: center;
+    font-style: italic;
+    font-size: smaller;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+.pantalla {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 0.5rem;
+    margin: 1rem 0;
+    border-radius: 5px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    border-bottom: 5px solid #555;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* 3. Estilos de la SALA (Tabla) */
+.sala {
+    /* Centramos la tabla */
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.sala table {
+    /* Hacemos que la tabla no ocupe todo el ancho */
+    width: auto; 
+    border-collapse: separate;
+    border-spacing: 10px 12px; /* Espacio entre asientos (horizontal | vertical) */
+}
+
+.sala th,
+.sala td {
+    border: none; /* Quitamos bordes de simple.css */
+    background: none; /* Quitamos fondos de simple.css */
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+    font-weight: bold;
+}
+
+.sala th {
+    /* Estilo para los encabezados Fila 1, A1, A2... */
+    color: var(--text-light);
+    font-size: 0.9em;
+}
+
+/* 4. Estilos de los ASIENTOS (Iconos) */
+
+/* Clase base común para libres y ocupados */
+.asiento {
+    display: inline-block;
+    padding: 0.5rem 0.8rem;
+    /* font-size: 2.2em;  */
+    line-height: 1;
+    border-radius: 8px 8px 0 0; /* Asiento con parte de arriba redondeada */
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Asiento LIBRE (Botón) */
+.asiento.libre {
+    /* Reseteamos estilos de botón de simple.css */
+    background: none;
+    margin: 0;
+    
+    /* Color verde (libre) */
+    color: #28a745;
+    border-bottom: 4px solid #28a745;
+}
+
+.asiento.libre:hover {
+    background-color: #d4edda; /* Fondo verde claro al pasar el ratón */
+    color: #155724;
+}
+
+/* Asiento OCUPADO (Span) */
+.asiento.ocupado {
+    /* Color rojo (ocupado) */
+    color: #dc3545;
+    border-bottom: 4px solid #dc3545;
+    background-color: #f8d7da;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* 5. Mensajes de Éxito y Error */
+.exito {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+.error {
+    background-color: #f8d7da !important;
+    border-color: #f5c6cb !important;
+    color: #721c24 !important;
+}
+
+/* 6. Botón de Peligro (Vaciar Sala) */
+.btn-peligro {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
+}
+.btn-peligro:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+/* 7. Sección de Estadísticas */
+.estadisticas ul {
+    list-style: none;
+    padding: 0;
+}
+.estadisticas li {
+    background: var(--bg-secondary);
+    padding: 0.25rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+    border-left: 5px solid var(--accent);
+}
+.estadisticas li strong {
+    font-size: 1.1em;
+}
+
+/* 8. Sección de Administración */
+.administracion h4 {
+    color: var(--text-light);
+}
