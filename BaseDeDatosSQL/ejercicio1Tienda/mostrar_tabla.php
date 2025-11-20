@@ -3,6 +3,9 @@
    require_once "funcionesBDD.php";
    $mensajeTabla = "";
 
+   // Verificar si hay mensaje de éxito
+$mensaje = $_GET['mensaje'] ?? '';
+
 function arrayATabla($array, $titulo = '') {
     if (empty($array)) return "<p>No hay datos</p>";
     
@@ -45,7 +48,7 @@ function arrayATabla($array, $titulo = '') {
             $html .= "</form>";
             
             // para el boton eliminar
-            $html .= "<form action='eliminar.php' method='post' style='display: inline;'>";
+            $html .= "<form action='eliminar.php' method='get' style='display: inline;'>";
             $html .= "<input type='hidden' name='id_producto' value='" . htmlspecialchars($fila['id_producto']) . "'>";
             $html .= "<input type='hidden' name='nombre' value='" . htmlspecialchars($fila['nombre']) . "'>";
             $html .= "<button type='submit' style='background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;' onclick='return confirm(\"¿Estás seguro de que quieres eliminar " . htmlspecialchars($fila['nombre']) . "?\")'>Eliminar</button>";
@@ -101,14 +104,17 @@ $resultado = $conexion->query("SELECT * FROM productos");
 </head>
 <body>
 
+<?php if ($mensaje): ?>
+    <div style="background: #d4edda; color: #155724; padding: 10px; margin: 10px 0; border: 1px solid #c3e6cb; border-radius: 4px;">
+        <?php echo htmlspecialchars($mensaje); ?>
+    </div>
+<?php endif; ?>
 
 <?php
 echo $mensajeTabla;
 ?>
 
-    <a href="tienda.php">
-        Volver atras
-        </a>
-    
+<a href="tienda.php">Volver atrás</a>
+
 </body>
 </html>
