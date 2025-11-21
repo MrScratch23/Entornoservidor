@@ -1,7 +1,14 @@
 <?php
 
-function conectarBDD($host, $user, $password, $base){
+
+
+
+function conectarBDD(){
     // establecer la conexion
+   $host = "localhost";
+$user = "usuario_tienda";
+$password = "1234";
+$base = "tienda"; 
 $conexion = new mysqli($host, $user, $password, $base);
 
 // comprobamos si todo salio bien

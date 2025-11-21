@@ -38,21 +38,18 @@ function arrayATabla($array, $titulo = '') {
             // Añadir botones de acciones
             $html .= "<td style='padding: 8px; text-align: center;'>";
            
-            // form para el boton modificar
-            $html .= "<form action='modificar.php' method='post' style='display: inline; margin-right: 5px;'>";
-            $html .= "<input type='hidden' name='id_producto' value='" . htmlspecialchars($fila['id_producto']) . "'>";
-            $html .= "<input type='hidden' name='nombre' value='" . htmlspecialchars($fila['nombre']) . "'>";
-            $html .= "<input type='hidden' name='descripcion' value='" . htmlspecialchars($fila['descripcion']) . "'>";
-            $html .= "<input type='hidden' name='precio' value='" . htmlspecialchars($fila['precio']) . "'>";
-            $html .= "<button type='submit' style='background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;'>Modificar</button>";
-            $html .= "</form>";
-            
-            // para el boton eliminar
-            $html .= "<form action='eliminar.php' method='get' style='display: inline;'>";
-            $html .= "<input type='hidden' name='id_producto' value='" . htmlspecialchars($fila['id_producto']) . "'>";
-            $html .= "<input type='hidden' name='nombre' value='" . htmlspecialchars($fila['nombre']) . "'>";
-            $html .= "<button type='submit' style='background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;' onclick='return confirm(\"¿Estás seguro de que quieres eliminar " . htmlspecialchars($fila['nombre']) . "?\")'>Eliminar</button>";
-            $html .= "</form>";
+           // form para el boton modificar
+        $html .= "<form action='modificar.php' method='get' style='display: inline; margin-right: 5px;'>";
+        $html .= "<input type='hidden' name='id_producto' value='" . htmlspecialchars($fila['id_producto']) . "'>";
+        $html .= "<button type='submit' style='background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;'>Modificar</button>";
+        $html .= "</form>";
+
+// para el boton eliminar
+        $html .= "<form action='eliminar.php' method='get' style='display: inline;'>";
+        $html .= "<input type='hidden' name='id_producto' value='" . htmlspecialchars($fila['id_producto']) . "'>";
+        $html .= "<input type='hidden' name='nombre' value='" . htmlspecialchars($fila['nombre']) . "'>";
+        $html .= "<button type='submit' style='background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;' onclick='return confirm(\"¿Estás seguro de que quieres eliminar " . htmlspecialchars($fila['nombre']) . "?\")'>Eliminar</button>";
+        $html .= "</form>";
             
             $html .= "</td>";
             $html .= '</tr>';
@@ -72,14 +69,11 @@ function arrayATabla($array, $titulo = '') {
 
 
 
-$host = "localhost";
-$user = "usuario_tienda";
-$password = "1234";
-$base = "tienda";
 
 
 
-$conexion = conectarBDD($host, $user, $password, $base);
+
+$conexion = conectarBDD();
 $resultado = $conexion->query("SELECT * FROM productos");
         
         if ($resultado->num_rows > 0) {

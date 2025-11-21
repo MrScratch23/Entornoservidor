@@ -4,14 +4,10 @@ require_once "funcionesBDD.php";
 
 
 
-$host = "localhost";
-$user = "usuario_tienda";
-$password = "1234";
-$base = "tienda";
+
 
 // inicializar variables
 $nombre = "";
-$descripcion = "";
 $precio = "";
 $errores = [];
 $mensaje = "";
@@ -19,13 +15,21 @@ $conexion = null;
 
 // procesar formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['añadir'])) {
-    $conexion = conectarBDD($host, $user, $password, $base);
+    $conexion = conectarBDD();
     
     // para añadir
     if (isset($_POST['añadir'])) {
         $nombre = trim($_POST['nombre'] ?? '');
         $descripcion = trim($_POST['descripcion'] ?? '');
         $precio = trim($_POST['precio'] ?? '');
+
+    
+        // Manejar descripción vacía como NULL
+if (empty(trim($descripcion))) {
+    $descripcion = null;
+}
+
+
 
         // validaciones
         if (empty($nombre)) {
@@ -38,6 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['añadir'])) {
 
         $precio_numero = floatval($precio);
 
+
+   
         if (empty($errores)) {
             // forma segura con stmt
             $stmt = $conexion->prepare("INSERT INTO productos (nombre, descripcion, precio) values (?,?,?)");

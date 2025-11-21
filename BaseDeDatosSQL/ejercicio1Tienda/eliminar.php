@@ -1,12 +1,9 @@
 <?php
 require_once "funcionesBDD.php";
 
-$host = "localhost";
-$user = "usuario_tienda";
-$password = "1234";
-$base = "tienda";
 
-$conexion = conectarBDD($host, $user, $password, $base);
+
+$conexion = conectarBDD();
 $idproducto = htmlspecialchars(trim($_GET['id_producto'])) ?? '';
 
 if (!ctype_digit($idproducto)) {
