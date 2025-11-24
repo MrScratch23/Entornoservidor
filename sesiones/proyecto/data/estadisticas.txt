@@ -1,0 +1,6 @@
+usuario: Ruben
+puntos: 100
+aciertos: 10
+fallos: 0
+fecha: 2025-11-22 09:11:24
+

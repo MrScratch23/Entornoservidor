@@ -1,0 +1,10 @@
+1|¿Cuál es la capital de Francia?|París|Londres|Berlín|A
+2|¿2 + 2?|3|4|5|B
+3|¿Color del cielo?|Rojo|Azul|Verde|B
+4|¿Animal que maúlla?|Perro|Gato|Pájaro|B
+5|¿Fruto rojo?|Manzana|Pera|Plátano|A
+6|¿Planeta rojo?|Venus|Marte|Júpiter|B
+7|¿Instrumento de cuerdas?|Flauta|Guitarra|Batería|B
+8|¿Estación de nieve?|Verano|Otoño|Invierno|C
+9|¿Autor de Don Quijote?|Cervantes|Shakespeare|García Márquez|A
+10|¿País de la pizza?|China|Italia|México|B
