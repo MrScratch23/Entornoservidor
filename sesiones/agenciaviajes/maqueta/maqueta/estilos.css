@@ -1,0 +1,245 @@
+/* estilos.css */
+
+/* --- Variables y Reset --- */
+:root {
+    --primary: #009688; /* Color principal */
+    --secondary: #ff5722; /* Color de advertencia o secundario */
+    --bg: #f0f2f5;
+    --text: #333;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 2rem;
+}
+
+/* --- Estilos Generales --- */
+header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+header h1 {
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.counter {
+    background-color: var(--secondary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    display: inline-block;
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+/* --- GRID de Viajes (index.php) --- */
+.travel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Card del Viaje */
+.trip-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease;
+    border: 1px solid #ddd; /* Borde por defecto */
+}
+
+.trip-card:hover {
+    transform: translateY(-5px);
+}
+
+.trip-img img {
+    height: 180px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.trip-info {
+    padding: 1.5rem;
+    flex-grow: 1;
+}
+
+.trip-info h2 {
+    margin-top: 0;
+    color: #263238;
+    font-size: 1.4rem;
+}
+
+.trip-info .meta {
+    color: #78909c;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+/* Footer de la card con precio y botón */
+.trip-action {
+    padding: 1rem 1.5rem;
+    background: #fafafa;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.btn-select {
+    background-color: var(--primary);
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.btn-select:hover {
+    background-color: #00796b;
+}
+
+/* --- SESIÓN: Estilos para viajes ya vistos (index.php) --- */
+.trip-card.visited {
+    border: 2px solid var(--primary);
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.trip-card.visited::after {
+    content: '👁 Visto';
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: var(--primary);
+    color: white;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    z-index: 10;
+}
+
+/* --- Estilos de la Página de Estadísticas (stats.php) --- */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: #666;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.detail-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+.data-row {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    color: #555;
+    font-size: 1.1rem;
+}
+
+.big-price {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+/* Sección de Gráficas */
+.stats-section h2 {
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-item {
+    margin-bottom: 1.5rem;
+}
+
+.stat-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.bar-container {
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    height: 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 10px 0 0 10px;
+    /* El ancho se asigna dinámicamente con PHP */
+    background-color: var(--primary);
+}
+
+.bar-fill.warning {
+    background-color: var(--secondary);
+}
+
+/* Botón de reserva */
+.btn-reserve {
+    background-color: var(--secondary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    border-radius: 6px;
+    margin-top: 1rem;
+    display: inline-block;
+}
+
+/* Mensaje flash para notificaciones */
+.mensaje-flash {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 12px 20px;
+    margin: 20px auto;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    /* max-width: 80; */
+}

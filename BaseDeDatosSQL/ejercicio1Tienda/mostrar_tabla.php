@@ -47,7 +47,6 @@ function arrayATabla($array, $titulo = '') {
 // para el boton eliminar
         $html .= "<form action='eliminar.php' method='get' style='display: inline;'>";
         $html .= "<input type='hidden' name='id_producto' value='" . htmlspecialchars($fila['id_producto']) . "'>";
-        $html .= "<input type='hidden' name='nombre' value='" . htmlspecialchars($fila['nombre']) . "'>";
         $html .= "<button type='submit' style='background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;' onclick='return confirm(\"¿Estás seguro de que quieres eliminar " . htmlspecialchars($fila['nombre']) . "?\")'>Eliminar</button>";
         $html .= "</form>";
             
@@ -108,7 +107,8 @@ $resultado = $conexion->query("SELECT * FROM productos");
 echo $mensajeTabla;
 ?>
 
-<a href="tienda.php">Volver atrás</a>
+<a href="tienda.php">Insertar producto</a>
+
 
 </body>
 </html>
