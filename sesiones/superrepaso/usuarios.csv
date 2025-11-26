@@ -1,0 +1,4 @@
+email;password;nombre;rol
+admin@test.com;123456;Juan Pérez;admin
+usuario@test.com;abcdef;Maria Lopez;user
+test@test.com;test123;Carlos Ruiz;user

@@ -45,12 +45,25 @@ function arrayATabla($array, $titulo = '') {
             foreach ($fila as $valor) {
                 $html .= "<td style='padding: 8px;'>" . htmlspecialchars($valor) . "</td>";
             }
-            // Añadir botón de "Añadir al carrito"
+            
+            // Determinar si la canción está en el carrito
+            $enCarrito = in_array($fila['id'], $_SESSION['carrito']);
+            
+            // Añadir botón según si está en el carrito o no
             $html .= '<td style="padding: 8px;">';
-            $html .= '<form method="post" style="display: inline; margin: 0;">';
-            $html .= '<input type="hidden" name="añadir" value="' . htmlspecialchars($fila['id']) . '">';
-            $html .= '<button type="submit" style="padding: 4px 8px; cursor: pointer;">Añadir al carrito</button>';
-            $html .= '</form>';
+            if ($enCarrito) {
+                // Botón de eliminar
+                $html .= '<form method="post" style="display: inline; margin: 0;">';
+                $html .= '<input type="hidden" name="remover" value="' . htmlspecialchars($fila['id']) . '">';
+                $html .= '<button type="submit" style="padding: 4px 8px; cursor: pointer; background: #ff6b6b; color: white;">Eliminar del carrito</button>';
+                $html .= '</form>';
+            } else {
+                // Botón de añadir
+                $html .= '<form method="post" style="display: inline; margin: 0;">';
+                $html .= '<input type="hidden" name="añadir" value="' . htmlspecialchars($fila['id']) . '">';
+                $html .= '<button type="submit" style="padding: 4px 8px; cursor: pointer; background: #4caf50; color: white;">Añadir al carrito</button>';
+                $html .= '</form>';
+            }
             $html .= '</td>';
             $html .= '</tr>';
         }

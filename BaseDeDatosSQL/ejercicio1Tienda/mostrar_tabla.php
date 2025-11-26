@@ -1,4 +1,5 @@
 <?php
+session_start();
    // para mostrar
    require_once "funcionesBDD.php";
    $mensajeTabla = "";
@@ -6,6 +7,7 @@
    // Verificar si hay mensaje de éxito
 $mensaje = $_GET['mensaje'] ?? '';
 
+$usuario = $_SESSION['usuario'] ?? 'Invitado'; 
 function arrayATabla($array, $titulo = '') {
     if (empty($array)) return "<p>No hay datos</p>";
     
@@ -96,6 +98,7 @@ $resultado = $conexion->query("SELECT * FROM productos");
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 </head>
 <body>
+    <h1> Bienvenido <?php echo $usuario ?></h1>
 
 <?php if ($mensaje): ?>
     <div style="background: #d4edda; color: #155724; padding: 10px; margin: 10px 0; border: 1px solid #c3e6cb; border-radius: 4px;">

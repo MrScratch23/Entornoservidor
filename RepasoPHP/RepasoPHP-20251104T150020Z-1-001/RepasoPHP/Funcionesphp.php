@@ -549,7 +549,274 @@ function valoresAleatorios($array, $cantidad = 1) {
     
     return $resultado;
 }
-?>
+
+// ==================== FUNCIONES CON ARRAY_FILTER ====================
+
+/**
+ * EJEMPLOS DE ARRAY_FILTER A VARIOS NIVELES
+ */
+
+// NIVEL 1: Filtrado básico
+function filtrarPorValor($array, $valorBuscado) {
+    return array_filter($array, function($elemento) use ($valorBuscado) {
+        return $elemento === $valorBuscado;
+    });
+}
+
+// NIVEL 2: Filtrado por clave en array asociativo
+function filtrarPorClave($array, $claveBuscada) {
+    return array_filter($array, function($valor, $clave) use ($claveBuscada) {
+        return $clave === $claveBuscada;
+    }, ARRAY_FILTER_USE_BOTH);
+}
+
+// NIVEL 3: Filtrado por condición en array multidimensional
+function filtrarUsuariosPorRol($usuarios, $rol) {
+    return array_filter($usuarios, function($usuario) use ($rol) {
+        return $usuario['rol'] === $rol;
+    });
+}
+
+// NIVEL 4: Filtrado con múltiples condiciones
+function filtrarUsuariosAvanzado($usuarios, $filtros) {
+    return array_filter($usuarios, function($usuario) use ($filtros) {
+        $cumple = true;
+        
+        if (isset($filtros['rol']) && $usuario['rol'] !== $filtros['rol']) {
+            $cumple = false;
+        }
+        
+        if (isset($filtros['email_contiene']) && 
+            strpos($usuario['email'], $filtros['email_contiene']) === false) {
+            $cumple = false;
+        }
+        
+        if (isset($filtros['min_length_nombre']) && 
+            strlen($usuario['nombre']) < $filtros['min_length_nombre']) {
+            $cumple = false;
+        }
+        
+        return $cumple;
+    });
+}
+
+// NIVEL 5: Filtrado con transformación (map + filter)
+function filtrarYTransformar($array, $condicion, $transformacion) {
+    $filtrado = array_filter($array, $condicion);
+    return array_map($transformacion, $filtrado);
+}
+
+
+// ==================== FUNCIONES PARA ACTUALIZAR ARRAYS EN ARCHIVOS ====================
+
+/**
+ * Actualizar valor en array asociativo dentro de CSV
+ */
+function actualizarEnCSV($archivo, $claveBusqueda, $valorBusqueda, $campoActualizar, $nuevoValor) {
+    if (!file_exists($archivo)) {
+        return false;
+    }
+    
+    $datos = cargarDatosSUPER($archivo, 'auto', ',');
+    $encontrado = false;
+    
+    foreach ($datos as &$fila) {
+        if (isset($fila[$claveBusqueda]) && $fila[$claveBusqueda] == $valorBusqueda) {
+            $fila[$campoActualizar] = $nuevoValor;
+            $encontrado = true;
+            break;
+        }
+    }
+    
+    if (!$encontrado) {
+        return false;
+    }
+    
+    // Guardar los datos actualizados
+    return guardarArrayCompletoCSV($archivo, $datos);
+}
+
+/**
+ * Guardar array completo en CSV (sobrescribe el archivo)
+ */
+function guardarArrayCompletoCSV($archivo, $arrayAsociativo) {
+    if (empty($arrayAsociativo)) {
+        return false;
+    }
+    
+    $handle = fopen($archivo, 'w');
+    if (!$handle) {
+        return false;
+    }
+    
+    // Escribir encabezados
+    fputcsv($handle, array_keys($arrayAsociativo[0]));
+    
+    // Escribir datos
+    foreach ($arrayAsociativo as $fila) {
+        fputcsv($handle, $fila);
+    }
+    
+    fclose($handle);
+    return true;
+}
+
+/**
+ * Incrementar contador en CSV
+ */
+function incrementarContadorCSV($archivo, $claveBusqueda, $valorBusqueda, $campoContador) {
+    $datos = cargarDatosSUPER($archivo, 'auto', ',');
+    
+    foreach ($datos as &$fila) {
+        if (isset($fila[$claveBusqueda]) && $fila[$claveBusqueda] == $valorBusqueda) {
+            // Si el campo existe, incrementar, sino inicializar en 1
+            $fila[$campoContador] = isset($fila[$campoContador]) ? 
+                                   (int)$fila[$campoContador] + 1 : 1;
+            return guardarArrayCompletoCSV($archivo, $datos);
+        }
+    }
+    
+    return false;
+}
+
+/**
+ * Actualizar valor en array asociativo dentro de TXT
+ */
+function actualizarEnTXT($archivo, $claveBusqueda, $valorBusqueda, $campoActualizar, $nuevoValor, $delimitador = '|') {
+    if (!file_exists($archivo)) {
+        return false;
+    }
+    
+    $lineas = file($archivo, FILE_IGNORE_NEW_LINES);
+    $encontrado = false;
+    
+    foreach ($lineas as &$linea) {
+        $partes = explode($delimitador, $linea);
+        
+        // Buscar el formato clave=valor en cada parte
+        foreach ($partes as &$parte) {
+            list($clave, $valor) = explode('=', $parte) + [null, null];
+            
+            if ($clave === $claveBusqueda && $valor == $valorBusqueda) {
+                // Encontramos la fila, ahora actualizar el campo específico
+                foreach ($partes as &$p) {
+                    list($c, $v) = explode('=', $p) + [null, null];
+                    if ($c === $campoActualizar) {
+                        $p = $c . '=' . $nuevoValor;
+                        $encontrado = true;
+                        break;
+                    }
+                }
+                $linea = implode($delimitador, $partes);
+                break 2;
+            }
+        }
+    }
+    
+    if ($encontrado) {
+        file_put_contents($archivo, implode("\n", $lineas));
+        return true;
+    }
+    
+    return false;
+}
+
+/**
+ * Incrementar contador en TXT
+ */
+function incrementarContadorTXT($archivo, $claveBusqueda, $valorBusqueda, $campoContador, $delimitador = '|') {
+    $lineas = file($archivo, FILE_IGNORE_NEW_LINES);
+    $encontrado = false;
+    
+    foreach ($lineas as &$linea) {
+        $partes = explode($delimitador, $linea);
+        
+        foreach ($partes as &$parte) {
+            list($clave, $valor) = explode('=', $parte) + [null, null];
+            
+            if ($clave === $claveBusqueda && $valor == $valorBusqueda) {
+                // Buscar y actualizar el contador
+                foreach ($partes as &$p) {
+                    list($c, $v) = explode('=', $p) + [null, null];
+                    if ($c === $campoContador) {
+                        $nuevoValor = isset($v) ? (int)$v + 1 : 1;
+                        $p = $c . '=' . $nuevoValor;
+                        $encontrado = true;
+                        break;
+                    }
+                }
+                $linea = implode($delimitador, $partes);
+                break 2;
+            }
+        }
+    }
+    
+    if ($encontrado) {
+        file_put_contents($archivo, implode("\n", $lineas));
+        return true;
+    }
+    
+    return false;
+}
+
+/**
+ * Función universal para contador de visitas (detecta formato automáticamente)
+ */
+function registrarVisita($archivo, $identificador, $campoContador = 'visitas') {
+    $extension = pathinfo($archivo, PATHINFO_EXTENSION);
+    
+    if ($extension === 'csv') {
+        return incrementarContadorCSV($archivo, 'email', $identificador, $campoContador);
+    } elseif ($extension === 'txt') {
+        return incrementarContadorTXT($archivo, 'email', $identificador, $campoContador);
+    }
+    
+    return false;
+}
+
+// ==================== FUNCIONES AUXILIARES ESPECÍFICAS PARA CONTADORES ====================
+
+/**
+ * Obtener estadísticas de visitas desde CSV
+ */
+function obtenerEstadisticasVisitasCSV($archivo) {
+    $datos = cargarDatosSUPER($archivo, 'auto', ',');
+    $estadisticas = [
+        'total_visitas' => 0,
+        'usuario_mas_activo' => '',
+        'max_visitas' => 0
+    ];
+    
+    foreach ($datos as $usuario) {
+        if (isset($usuario['visitas'])) {
+            $visitas = (int)$usuario['visitas'];
+            $estadisticas['total_visitas'] += $visitas;
+            
+            if ($visitas > $estadisticas['max_visitas']) {
+                $estadisticas['max_visitas'] = $visitas;
+                $estadisticas['usuario_mas_activo'] = $usuario['nombre'] ?? $usuario['email'];
+            }
+        }
+    }
+    
+    return $estadisticas;
+}
+
+/**
+ * Reiniciar contador de visitas
+ */
+function reiniciarContador($archivo, $identificador, $campoContador = 'visitas') {
+    $extension = pathinfo($archivo, PATHINFO_EXTENSION);
+    
+    if ($extension === 'csv') {
+        return actualizarEnCSV($archivo, 'email', $identificador, $campoContador, '0');
+    } elseif ($extension === 'txt') {
+        return actualizarEnTXT($archivo, 'email', $identificador, $campoContador, '0');
+    }
+    
+    return false;
+}
+
 
 // ==================== EJEMPLOS DE USO ====================
 
@@ -566,7 +833,7 @@ guardarArrayIndexadoCSV('frutas.csv', $frutas);
 // ARRAYS ASOCIATIVOS
 $usuario = ['nombre' => 'Juan', 'email' => 'juan@email.com', 'edad' => 25];
 eliminarClaveArray($usuario, 'edad');
-borrarValorArray($usuario, 'juan@email.com'); // Nueva función añadida
+borrarValorArray($usuario, 'juan@email.com');
 guardarArrayAsociativoTXT('usuario.txt', $usuario);
 guardarArrayAsociativoCSV('usuarios.csv', $usuario);
 
@@ -587,17 +854,130 @@ $mensaje .= arrayATabla($usuario, 'Usuario Tabla');
 
 // SUBIR ARCHIVOS
 subirArchivo($_FILES['archivo'], $carpeta, 'nuevo_nombre');
-*/
 
-/* Array indexado
+// VALORES ALEATORIOS
 $frutas = ['manzana', 'banana', 'naranja', 'uva'];
 echo valorAleatorio($frutas); // Ej: "banana"
 
-Array asociativo  
 $colores = ['rojo' => '#FF0000', 'verde' => '#00FF00', 'azul' => '#0000FF'];
 echo valorAleatorioAsociativo($colores); // Ej: "#00FF00"
 
- Múltiples valores
 $numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 print_r(valoresAleatorios($numeros, 3)); // Ej: [3, 7, 9]
-/*
+
+// ARRAY_FILTER EJEMPLOS
+$usuarios = [
+    ['id' => 1, 'nombre' => 'Ana', 'email' => 'ana@test.com', 'rol' => 'admin', 'activo' => true],
+    ['id' => 2, 'nombre' => 'Luis', 'email' => 'luis@empresa.com', 'rol' => 'user', 'activo' => true],
+    ['id' => 3, 'nombre' => 'Marta', 'email' => 'marta@test.com', 'rol' => 'user', 'activo' => false],
+    ['id' => 4, 'nombre' => 'Carlos', 'email' => 'carlos@empresa.com', 'rol' => 'admin', 'activo' => true]
+];
+
+// EJEMPLO 1: Filtrar usuarios por rol
+$admins = filtrarUsuariosPorRol($usuarios, 'admin');
+
+// EJEMPLO 2: Filtrar con múltiples condiciones
+$filtros = [
+    'rol' => 'user',
+    'email_contiene' => 'empresa',
+    'min_length_nombre' => 4
+];
+$usuariosFiltrados = filtrarUsuariosAvanzado($usuarios, $filtros);
+
+// EJEMPLO 3: Filtrar y transformar
+$emailsActivos = filtrarYTransformar(
+    $usuarios,
+    function($usuario) { return $usuario['activo']; },
+    function($usuario) { return $usuario['email']; }
+);
+
+// EJEMPLO 4: Filtrado en tiempo real
+$usuariosConEmailTest = array_filter($usuarios, function($usuario) {
+    return strpos($usuario['email'], 'test.com') !== false;
+});
+
+// EJEMPLO 5: Usando use para variables externas
+$rolBuscado = 'admin';
+$minCaracteres = 4;
+$resultado = array_filter($usuarios, function($usuario) use ($rolBuscado, $minCaracteres) {
+    return $usuario['rol'] === $rolBuscado && strlen($usuario['nombre']) >= $minCaracteres;
+});
+
+// MOSTRAR RESULTADOS
+echo "<h3>Usuarios administradores:</h3>";
+echo arrayATabla($admins);
+
+echo "<h3>Usuarios filtrados avanzado:</h3>";
+echo arrayATabla($usuariosFiltrados);
+
+echo "<h3>Emails de usuarios activos:</h3>";
+echo arrayALista($emailsActivos);
+
+// EJEMPLOS DE ACTUALIZACIÓN EN ARCHIVOS
+
+// EJEMPLO 1: Contador de visitas para usuarios en CSV
+// Archivo: usuarios_visitas.csv
+// email,password,nombre,rol,visitas
+// admin@test.com,123456,Juan Pérez,admin,0
+
+// Cuando un usuario inicia sesión:
+registrarVisita('usuarios_visitas.csv', 'admin@test.com', 'visitas');
+
+// EJEMPLO 2: Actualizar cualquier campo en CSV
+actualizarEnCSV(
+    'usuarios.csv',           // archivo
+    'email',                  // campo para buscar
+    'admin@test.com',         // valor a buscar
+    'nombre',                 // campo a actualizar
+    'Juan Pérez Actualizado'  // nuevo valor
+);
+
+// EJEMPLO 3: Contador en archivo TXT
+// Archivo: contadores.txt
+// email=admin@test.com|visitas=5|ultima_visita=2024-01-01
+
+registrarVisita('contadores.txt', 'admin@test.com', 'visitas');
+
+// EJEMPLO 4: Actualizar en TXT
+actualizarEnTXT(
+    'configuraciones.txt',
+    'usuario_id',
+    '123',
+    'tema',
+    'oscuro',
+    '|'
+);
+
+// EJEMPLO 5: Uso en sistema de login
+session_start();
+
+function procesarLogin($email, $password) {
+    // ... validación del login ...
+    
+    if ($login_exitoso) {
+        // Registrar la visita
+        registrarVisita('usuarios.csv', $email, 'visitas');
+        
+        // Actualizar última conexión
+        actualizarEnCSV(
+            'usuarios.csv',
+            'email',
+            $email,
+            'ultima_conexion',
+            date('Y-m-d H:i:s')
+        );
+    }
+}
+
+// EJEMPLO 6: Estadísticas de visitas
+$estadisticas = obtenerEstadisticasVisitasCSV('usuarios.csv');
+echo "Total visitas: " . $estadisticas['total_visitas'];
+echo "Usuario más activo: " . $estadisticas['usuario_mas_activo'];
+
+// EJEMPLO 7: Reiniciar contador
+reiniciarContador('usuarios.csv', 'admin@test.com', 'visitas');
+*/
+
+
+
+?>
