@@ -52,15 +52,15 @@ function eliminarDelArray(&$array, $valor) {
 }
 
 // Guardar array indexado en TXT
-function guardarArrayIndexadoTXT($archivo, $arrayIndexado) {
-    file_put_contents($archivo, implode("\n", $arrayIndexado));
+function guardarArrayIndexadoTXT($archivo, $arrayIndexado, $delimitador = "\n") {
+    file_put_contents($archivo, implode($delimitador, $arrayIndexado));
     return true;
 }
 
 // Guardar array indexado en CSV
-function guardarArrayIndexadoCSV($archivo, $arrayIndexado) {
+function guardarArrayIndexadoCSV($archivo, $arrayIndexado, $delimitador = ",") {
     $handle = @fopen($archivo, 'a');
-    fputcsv($handle, $arrayIndexado);
+    fputcsv($handle, $arrayIndexado, $delimitador);
     fclose($handle);
     return true;
 }
@@ -96,7 +96,6 @@ function borrarClaveArray(&$arrayAsociativo, $clave) {
     return false;
 }
 
-
 /**
  * Borrar todas las ocurrencias de un valor en un array asociativo
  * (si el valor aparece múltiples veces, elimina todas las claves)
@@ -112,21 +111,21 @@ function borrarTodasOcurrenciasValor(&$arrayAsociativo, $valor) {
     return $borrados;
 }
 
-function guardarArrayAsociativoTXT($archivo, $arrayAsociativo) {
+function guardarArrayAsociativoTXT($archivo, $arrayAsociativo, $delimitador = ": ") {
     $lineas = [];
     foreach ($arrayAsociativo as $clave => $valor) {
-        $lineas[] = "$clave: $valor";
+        $lineas[] = "$clave$delimitador$valor";
     }
     file_put_contents($archivo, implode("\n", $lineas));
     return true;
 }
 
-function guardarArrayAsociativoCSV($archivo, $arrayAsociativo) {
+function guardarArrayAsociativoCSV($archivo, $arrayAsociativo, $delimitador = ",") {
     $handle = fopen($archivo, 'a');
     if (filesize($archivo) == 0) {
-        fputcsv($handle, array_keys($arrayAsociativo));
+        fputcsv($handle, array_keys($arrayAsociativo), $delimitador);
     }
-    fputcsv($handle, array_values($arrayAsociativo));
+    fputcsv($handle, array_values($arrayAsociativo), $delimitador);
     fclose($handle);
     return true;
 }
@@ -146,10 +145,10 @@ function eliminarLineaArchivo($archivo, $contenidoEliminar) {
 
 // ==================== FUNCIONES PARA ARCHIVOS CSV ====================
 
-function eliminarFilaCSV($archivo, $valorBuscar) {
+function eliminarFilaCSV($archivo, $valorBuscar, $delimitador = ",") {
     $filas = [];
     $handle = fopen($archivo, 'r');
-    while ($data = fgetcsv($handle)) {
+    while ($data = fgetcsv($handle, 0, $delimitador)) {
         $filas[] = $data;
     }
     fclose($handle);
@@ -163,17 +162,17 @@ function eliminarFilaCSV($archivo, $valorBuscar) {
     
     $handle = fopen($archivo, 'w');
     foreach ($filas as $fila) {
-        fputcsv($handle, $fila);
+        fputcsv($handle, $fila, $delimitador);
     }
     fclose($handle);
     return true;
 }
 
-function valorExiste($archivo, $valor) {
+function valorExiste($archivo, $valor, $delimitador = ",") {
     if (!file_exists($archivo)) return false;
     
     $handle = fopen($archivo, 'r');
-    while ($data = fgetcsv($handle)) {
+    while ($data = fgetcsv($handle, 0, $delimitador)) {
         if (in_array($valor, $data)) {
             fclose($handle);
             return true;
@@ -182,7 +181,6 @@ function valorExiste($archivo, $valor) {
     fclose($handle);
     return false;
 }
-
 
 function cargarDatosSUPER($archivo, $formato = 'indexado', $delimitador = ',')
 {
@@ -325,8 +323,7 @@ function txtALista($archivo, $titulo = '') {
     return $html;
 }
 
-
-function csvALista($archivo, $titulo = '') {
+function csvALista($archivo, $titulo = '', $delimitador = ",") {
     if (!file_exists($archivo)) return "<p>Archivo no encontrado</p>";
     
     $html = '';
@@ -337,7 +334,7 @@ function csvALista($archivo, $titulo = '') {
     $html .= '<ul>';
     $handle = fopen($archivo, 'r');
     
-    while ($data = fgetcsv($handle)) {
+    while ($data = fgetcsv($handle, 0, $delimitador)) {
         $html .= "<li>" . implode(" - ", $data) . "</li>";
     }
     
@@ -390,7 +387,7 @@ function arrayATabla($array, $titulo = '') {
     return $html;
 }
 
-function csvATabla($archivo, $titulo = '') {
+function csvATabla($archivo, $titulo = '', $delimitador = ",") {
     if (!file_exists($archivo)) return "<p>Archivo no encontrado</p>";
     
     $html = '';
@@ -403,7 +400,7 @@ function csvATabla($archivo, $titulo = '') {
     $handle = fopen($archivo, 'r');
     $esPrimeraLinea = true;
     
-    while ($data = fgetcsv($handle)) {
+    while ($data = fgetcsv($handle, 0, $delimitador)) {
         $html .= '<tr>';
         foreach ($data as $valor) {
             if ($esPrimeraLinea) {
@@ -477,7 +474,6 @@ function subirArchivoComprobandoDir($archivo, $carpetaDestino = 'archivos') {
     }
 }
 
-
 // como mostrar una imagen
 
 function mostrarPersonajeConImagen($personaje) {
@@ -493,7 +489,6 @@ function mostrarPersonajeConImagen($personaje) {
     echo "<p><strong>Imagen:</strong></p>";
     echo "<img src='imagenes_personajes/" . $personaje['imagen'] . "' width='200'>";
 }
-
 
 // ==================== FUNCIONES PARA VALORES ALEATORIOS ====================
 
@@ -606,18 +601,17 @@ function filtrarYTransformar($array, $condicion, $transformacion) {
     return array_map($transformacion, $filtrado);
 }
 
-
 // ==================== FUNCIONES PARA ACTUALIZAR ARRAYS EN ARCHIVOS ====================
 
 /**
  * Actualizar valor en array asociativo dentro de CSV
  */
-function actualizarEnCSV($archivo, $claveBusqueda, $valorBusqueda, $campoActualizar, $nuevoValor) {
+function actualizarEnCSV($archivo, $claveBusqueda, $valorBusqueda, $campoActualizar, $nuevoValor, $delimitador = ",") {
     if (!file_exists($archivo)) {
         return false;
     }
     
-    $datos = cargarDatosSUPER($archivo, 'auto', ',');
+    $datos = cargarDatosSUPER($archivo, 'auto', $delimitador);
     $encontrado = false;
     
     foreach ($datos as &$fila) {
@@ -633,13 +627,13 @@ function actualizarEnCSV($archivo, $claveBusqueda, $valorBusqueda, $campoActuali
     }
     
     // Guardar los datos actualizados
-    return guardarArrayCompletoCSV($archivo, $datos);
+    return guardarArrayCompletoCSV($archivo, $datos, $delimitador);
 }
 
 /**
  * Guardar array completo en CSV (sobrescribe el archivo)
  */
-function guardarArrayCompletoCSV($archivo, $arrayAsociativo) {
+function guardarArrayCompletoCSV($archivo, $arrayAsociativo, $delimitador = ",") {
     if (empty($arrayAsociativo)) {
         return false;
     }
@@ -650,11 +644,11 @@ function guardarArrayCompletoCSV($archivo, $arrayAsociativo) {
     }
     
     // Escribir encabezados
-    fputcsv($handle, array_keys($arrayAsociativo[0]));
+    fputcsv($handle, array_keys($arrayAsociativo[0]), $delimitador);
     
     // Escribir datos
     foreach ($arrayAsociativo as $fila) {
-        fputcsv($handle, $fila);
+        fputcsv($handle, $fila, $delimitador);
     }
     
     fclose($handle);
@@ -664,15 +658,15 @@ function guardarArrayCompletoCSV($archivo, $arrayAsociativo) {
 /**
  * Incrementar contador en CSV
  */
-function incrementarContadorCSV($archivo, $claveBusqueda, $valorBusqueda, $campoContador) {
-    $datos = cargarDatosSUPER($archivo, 'auto', ',');
+function incrementarContadorCSV($archivo, $claveBusqueda, $valorBusqueda, $campoContador, $delimitador = ",") {
+    $datos = cargarDatosSUPER($archivo, 'auto', $delimitador);
     
     foreach ($datos as &$fila) {
         if (isset($fila[$claveBusqueda]) && $fila[$claveBusqueda] == $valorBusqueda) {
             // Si el campo existe, incrementar, sino inicializar en 1
             $fila[$campoContador] = isset($fila[$campoContador]) ? 
                                    (int)$fila[$campoContador] + 1 : 1;
-            return guardarArrayCompletoCSV($archivo, $datos);
+            return guardarArrayCompletoCSV($archivo, $datos, $delimitador);
         }
     }
     
@@ -762,13 +756,17 @@ function incrementarContadorTXT($archivo, $claveBusqueda, $valorBusqueda, $campo
 /**
  * Función universal para contador de visitas (detecta formato automáticamente)
  */
-function registrarVisita($archivo, $identificador, $campoContador = 'visitas') {
+function registrarVisita($archivo, $identificador, $campoContador = 'visitas', $delimitador = null) {
     $extension = pathinfo($archivo, PATHINFO_EXTENSION);
     
+    if ($delimitador === null) {
+        $delimitador = ($extension === 'csv') ? ',' : '|';
+    }
+    
     if ($extension === 'csv') {
-        return incrementarContadorCSV($archivo, 'email', $identificador, $campoContador);
+        return incrementarContadorCSV($archivo, 'email', $identificador, $campoContador, $delimitador);
     } elseif ($extension === 'txt') {
-        return incrementarContadorTXT($archivo, 'email', $identificador, $campoContador);
+        return incrementarContadorTXT($archivo, 'email', $identificador, $campoContador, $delimitador);
     }
     
     return false;
@@ -779,8 +777,8 @@ function registrarVisita($archivo, $identificador, $campoContador = 'visitas') {
 /**
  * Obtener estadísticas de visitas desde CSV
  */
-function obtenerEstadisticasVisitasCSV($archivo) {
-    $datos = cargarDatosSUPER($archivo, 'auto', ',');
+function obtenerEstadisticasVisitasCSV($archivo, $delimitador = ",") {
+    $datos = cargarDatosSUPER($archivo, 'auto', $delimitador);
     $estadisticas = [
         'total_visitas' => 0,
         'usuario_mas_activo' => '',
@@ -805,57 +803,72 @@ function obtenerEstadisticasVisitasCSV($archivo) {
 /**
  * Reiniciar contador de visitas
  */
-function reiniciarContador($archivo, $identificador, $campoContador = 'visitas') {
+function reiniciarContador($archivo, $identificador, $campoContador = 'visitas', $delimitador = null) {
     $extension = pathinfo($archivo, PATHINFO_EXTENSION);
     
+    if ($delimitador === null) {
+        $delimitador = ($extension === 'csv') ? ',' : '|';
+    }
+    
     if ($extension === 'csv') {
-        return actualizarEnCSV($archivo, 'email', $identificador, $campoContador, '0');
+        return actualizarEnCSV($archivo, 'email', $identificador, $campoContador, '0', $delimitador);
     } elseif ($extension === 'txt') {
-        return actualizarEnTXT($archivo, 'email', $identificador, $campoContador, '0');
+        return actualizarEnTXT($archivo, 'email', $identificador, $campoContador, '0', $delimitador);
     }
     
     return false;
 }
 
+// ==================== EJEMPLOS COMPLETOS DE USO ====================
 
-// ==================== EJEMPLOS DE USO ====================
-
+// EJEMPLO 1: ARRAYS INDEXADOS BÁSICOS
 /*
-// Definir carpeta
-$carpeta = "/carpeta";
-
-// ARRAYS INDEXADOS
 $frutas = ['manzana', 'banana', 'naranja'];
-eliminarDelArray($frutas, 'banana');
-guardarArrayIndexadoTXT('frutas.txt', $frutas);
-guardarArrayIndexadoCSV('frutas.csv', $frutas);
+eliminarDelArray($frutas, 'banana'); // Elimina 'banana'
+guardarArrayIndexadoTXT('frutas.txt', $frutas, "|");
+guardarArrayIndexadoCSV('frutas.csv', $frutas, ";");
+*/
 
-// ARRAYS ASOCIATIVOS
+// EJEMPLO 2: ARRAYS ASOCIATIVOS
+/*
 $usuario = ['nombre' => 'Juan', 'email' => 'juan@email.com', 'edad' => 25];
-eliminarClaveArray($usuario, 'edad');
-borrarValorArray($usuario, 'juan@email.com');
-guardarArrayAsociativoTXT('usuario.txt', $usuario);
-guardarArrayAsociativoCSV('usuarios.csv', $usuario);
+eliminarClaveArray($usuario, 'edad'); // Elimina clave 'edad'
+borrarValorArray($usuario, 'juan@email.com'); // Elimina por valor
+guardarArrayAsociativoTXT('usuario.txt', $usuario, " -> ");
+guardarArrayAsociativoCSV('usuarios.csv', $usuario, ";");
+*/
 
-// ARCHIVOS
+// EJEMPLO 3: ARCHIVOS - ELIMINACIÓN
+/*
 eliminarLineaArchivo('notas.txt', 'texto a borrar');
-eliminarFilaCSV('datos.csv', 'valor a eliminar');
+eliminarFilaCSV('datos.csv', 'valor a eliminar', ";");
+*/
 
-// VERIFICAR
-if (valorExiste('usuarios.csv', 'juan@email.com')) {
+// EJEMPLO 4: VERIFICACIÓN DE EXISTENCIA
+/*
+if (valorExiste('usuarios.csv', 'juan@email.com', ";")) {
     echo "El valor ya existe";
 }
+*/
 
-// MOSTRAR
-$mensaje = arrayALista($frutas, 'Frutas');
-$mensaje .= arrayALista($usuario, 'Usuario');
-$mensaje .= arrayATabla($frutas, 'Frutas Tabla');
-$mensaje .= arrayATabla($usuario, 'Usuario Tabla');
+// EJEMPLO 5: MOSTRAR DATOS
+/*
+echo arrayALista($frutas, 'Frutas');
+echo arrayALista($usuario, 'Usuario');
+echo arrayATabla($frutas, 'Frutas Tabla');
+echo arrayATabla($usuario, 'Usuario Tabla');
+echo csvATabla('datos.csv', 'Datos CSV', ',');
+echo txtALista('notas.txt', 'Notas');
+*/
 
-// SUBIR ARCHIVOS
-subirArchivo($_FILES['archivo'], $carpeta, 'nuevo_nombre');
+// EJEMPLO 6: SUBIR ARCHIVOS
+/*
+$resultado = subirArchivoComprobandoDir($_FILES['imagen'], 'uploads');
+echo $resultado;
+*/
 
-// VALORES ALEATORIOS
+// EJEMPLO 7: VALORES ALEATORIOS
+/*
 $frutas = ['manzana', 'banana', 'naranja', 'uva'];
 echo valorAleatorio($frutas); // Ej: "banana"
 
@@ -864,8 +877,10 @@ echo valorAleatorioAsociativo($colores); // Ej: "#00FF00"
 
 $numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 print_r(valoresAleatorios($numeros, 3)); // Ej: [3, 7, 9]
+*/
 
-// ARRAY_FILTER EJEMPLOS
+// EJEMPLO 8: ARRAY_FILTER CON USUARIOS
+/*
 $usuarios = [
     ['id' => 1, 'nombre' => 'Ana', 'email' => 'ana@test.com', 'rol' => 'admin', 'activo' => true],
     ['id' => 2, 'nombre' => 'Luis', 'email' => 'luis@empresa.com', 'rol' => 'user', 'activo' => true],
@@ -873,10 +888,10 @@ $usuarios = [
     ['id' => 4, 'nombre' => 'Carlos', 'email' => 'carlos@empresa.com', 'rol' => 'admin', 'activo' => true]
 ];
 
-// EJEMPLO 1: Filtrar usuarios por rol
+// Filtrar por rol
 $admins = filtrarUsuariosPorRol($usuarios, 'admin');
 
-// EJEMPLO 2: Filtrar con múltiples condiciones
+// Filtrar con múltiples condiciones
 $filtros = [
     'rol' => 'user',
     'email_contiene' => 'empresa',
@@ -884,46 +899,20 @@ $filtros = [
 ];
 $usuariosFiltrados = filtrarUsuariosAvanzado($usuarios, $filtros);
 
-// EJEMPLO 3: Filtrar y transformar
+// Filtrar y transformar
 $emailsActivos = filtrarYTransformar(
     $usuarios,
     function($usuario) { return $usuario['activo']; },
     function($usuario) { return $usuario['email']; }
 );
+*/
 
-// EJEMPLO 4: Filtrado en tiempo real
-$usuariosConEmailTest = array_filter($usuarios, function($usuario) {
-    return strpos($usuario['email'], 'test.com') !== false;
-});
-
-// EJEMPLO 5: Usando use para variables externas
-$rolBuscado = 'admin';
-$minCaracteres = 4;
-$resultado = array_filter($usuarios, function($usuario) use ($rolBuscado, $minCaracteres) {
-    return $usuario['rol'] === $rolBuscado && strlen($usuario['nombre']) >= $minCaracteres;
-});
-
-// MOSTRAR RESULTADOS
-echo "<h3>Usuarios administradores:</h3>";
-echo arrayATabla($admins);
-
-echo "<h3>Usuarios filtrados avanzado:</h3>";
-echo arrayATabla($usuariosFiltrados);
-
-echo "<h3>Emails de usuarios activos:</h3>";
-echo arrayALista($emailsActivos);
-
-// EJEMPLOS DE ACTUALIZACIÓN EN ARCHIVOS
-
-// EJEMPLO 1: Contador de visitas para usuarios en CSV
-// Archivo: usuarios_visitas.csv
-// email,password,nombre,rol,visitas
-// admin@test.com,123456,Juan Pérez,admin,0
-
-// Cuando un usuario inicia sesión:
+// EJEMPLO 9: ACTUALIZACIÓN EN ARCHIVOS CSV
+/*
+// Contador de visitas
 registrarVisita('usuarios_visitas.csv', 'admin@test.com', 'visitas');
 
-// EJEMPLO 2: Actualizar cualquier campo en CSV
+// Actualizar campo específico
 actualizarEnCSV(
     'usuarios.csv',           // archivo
     'email',                  // campo para buscar
@@ -931,14 +920,12 @@ actualizarEnCSV(
     'nombre',                 // campo a actualizar
     'Juan Pérez Actualizado'  // nuevo valor
 );
+*/
 
-// EJEMPLO 3: Contador en archivo TXT
-// Archivo: contadores.txt
-// email=admin@test.com|visitas=5|ultima_visita=2024-01-01
-
+// EJEMPLO 10: ACTUALIZACIÓN EN ARCHIVOS TXT
+/*
 registrarVisita('contadores.txt', 'admin@test.com', 'visitas');
 
-// EJEMPLO 4: Actualizar en TXT
 actualizarEnTXT(
     'configuraciones.txt',
     'usuario_id',
@@ -947,10 +934,11 @@ actualizarEnTXT(
     'oscuro',
     '|'
 );
+*/
 
-// EJEMPLO 5: Uso en sistema de login
+// EJEMPLO 11: SISTEMA DE LOGIN CON REGISTRO
+/*
 session_start();
-
 function procesarLogin($email, $password) {
     // ... validación del login ...
     
@@ -966,18 +954,182 @@ function procesarLogin($email, $password) {
             'ultima_conexion',
             date('Y-m-d H:i:s')
         );
+        return true;
     }
+    return false;
 }
+*/
 
-// EJEMPLO 6: Estadísticas de visitas
+// EJEMPLO 12: ESTADÍSTICAS
+/*
 $estadisticas = obtenerEstadisticasVisitasCSV('usuarios.csv');
 echo "Total visitas: " . $estadisticas['total_visitas'];
 echo "Usuario más activo: " . $estadisticas['usuario_mas_activo'];
+*/
 
-// EJEMPLO 7: Reiniciar contador
+// EJEMPLO 13: REINICIAR CONTADOR
+/*
 reiniciarContador('usuarios.csv', 'admin@test.com', 'visitas');
 */
 
+// EJEMPLO 14: CARGAR DATOS
+/*
+$datosCSV = cargarDatosSUPER('archivo.csv', 'auto', ';');
+$datosTXT = cargarArchivoUniversal('archivo.txt', '|', false);
+*/
 
+// EJEMPLO 15: VALIDACIONES
+/*
+if (validarEmail('usuario@email.com')) {
+    echo "Email válido";
+}
 
+if (validarNumero(25, 0, 100)) {
+    echo "Número válido";
+}
+*/
+
+// EJEMPLO 16: ELIMINACIONES MÚLTIPLES
+/*
+$arrayEjemplo = ['a' => 1, 'b' => 2, 'c' => 1, 'd' => 3];
+$eliminados = borrarTodasOcurrenciasValor($arrayEjemplo, 1);
+echo "Se eliminaron $eliminados ocurrencias";
+*/
+
+// EJEMPLO 17: SISTEMA DE USUARIOS COMPLETO
+/*
+$usuarios = cargarDatosSUPER('usuarios.csv', 'auto', ';');
+$usuariosActivos = filtrarUsuariosPorRol($usuarios, 'activo');
+$usuariosOrdenados = ordenarArrayPorClave($usuariosActivos, 'nombre');
+crearBackupTimestamp($usuariosOrdenados, 'backups', 'usuarios_activos');
+echo arrayATabla($usuariosOrdenados, 'Usuarios Activos Ordenados');
+*/
+
+// EJEMPLO 18: SISTEMA DE INVENTARIO
+/*
+$productos = [
+    ['id' => 1, 'nombre' => 'Laptop', 'precio' => 999.99, 'stock' => 5],
+    ['id' => 2, 'nombre' => 'Mouse', 'precio' => 25.50, 'stock' => 20],
+    ['id' => 3, 'nombre' => 'Teclado', 'precio' => 75.00, 'stock' => 0]
+];
+
+// Filtrar productos con stock
+$conStock = array_filter($productos, function($producto) {
+    return $producto['stock'] > 0;
+});
+*/
+
+// EJEMPLO 19: SESIONES Y COOKIES
+/*
+guardarEnSesion('carrito', $productos);
+$carrito = obtenerDeSesion('carrito', []);
+
+guardarEnCookie('preferencias', ['tema' => 'oscuro', 'idioma' => 'es'], 86400);
+$preferencias = obtenerDeCookie('preferencias', []);
+*/
+
+// EJEMPLO 20: SEGURIDAD
+/*
+$datosUsuario = sanitizarArray($_POST);
+$esquema = ['nombre' => 'string', 'edad' => 'int', 'email' => 'email'];
+$datosValidados = validarEsquemaArray($datosUsuario, $esquema);
+*/
+
+// EJEMPLO 21: BACKUP Y LOGGING
+/*
+crearBackupArray($usuarios, 'backup_usuarios.json');
+registrarLog('Usuario admin inició sesión', 'sistema.log', 'INFO');
+logOperacionArray('filtrado', $usuariosFiltrados);
+*/
+
+// EJEMPLO 22: DEBUG
+/*
+debugArray($usuarios, 'Array de Usuarios');
+volcarArrayCLI($frutas, 'Array de Frutas');
+*/
+
+// EJEMPLO 23: BUSQUEDA Y ORDENACIÓN
+/*
+$usuarioEncontrado = buscarEnArrayMultidimensional($usuarios, 'email', 'ana@test.com');
+$usuariosOrdenados = ordenarArrayPorClave($usuarios, 'nombre', 'desc');
+*/
+
+// EJEMPLO 24: CONTEO Y VALORES ÚNICOS
+/*
+$numeros = [1, 2, 2, 3, 3, 3, 4];
+$conteo = contarOcurrencias($numeros); // [1=>1, 2=>2, 3=>3, 4=>1]
+$unicos = valoresUnicos($numeros); // [1, 2, 3, 4]
+*/
+
+// EJEMPLO 25: COMBINACIÓN Y DIFERENCIAS
+/*
+$array1 = [1, 2, 3];
+$array2 = [3, 4, 5];
+$combinados = combinarArrays($array1, $array2); // [1, 2, 3, 3, 4, 5]
+$diferencias = diferenciasArrays($array1, $array2); // [1, 2]
+*/
+
+// EJEMPLO 26: MANEJO DE STRINGS
+/*
+$arrayDesdeString = stringAArray("manzana,banana;naranja|uva", [',', ';', '|']);
+$stringDesdeArray = arrayAString($frutas, ' - ', '"');
+$arrayLimpio = limpiarArrayStrings(['  texto  ', '<script>alert()</script>']);
+*/
+
+// EJEMPLO 27: SISTEMA DE RESERVAS (VIAJES)
+/*
+// En tu página principal de viajes
+session_start();
+
+// Añadir reserva
+if (isset($_POST['añadir_reserva'])) {
+    $idViaje = $_POST['añadir_reserva'];
+    if (!in_array($idViaje, $_SESSION['reservas'])) {
+        $_SESSION['reservas'][] = $idViaje;
+        registrarLog("Reserva añadida: $idViaje", 'reservas.log');
+    }
+}
+
+// Eliminar reserva
+if (isset($_POST['eliminar_reserva'])) {
+    $idViaje = $_POST['eliminar_reserva'];
+    if (($key = array_search($idViaje, $_SESSION['reservas'])) !== false) {
+        unset($_SESSION['reservas'][$key]);
+        registrarLog("Reserva eliminada: $idViaje", 'reservas.log');
+    }
+}
+*/
+
+// EJEMPLO 28: PROCESAMIENTO POR LOTES
+/*
+// Procesar múltiples archivos
+$archivos = ['datos1.csv', 'datos2.csv', 'datos3.csv'];
+$todosLosDatos = [];
+
+foreach ($archivos as $archivo) {
+    if (file_exists($archivo)) {
+        $datos = cargarDatosSUPER($archivo, 'auto', ',');
+        $todosLosDatos = combinarArrays($todosLosDatos, $datos);
+    }
+}
+
+// Filtrar y guardar resultado
+$datosFiltrados = filtrarUsuariosAvanzado($todosLosDatos, ['activo' => true]);
+guardarArrayCompletoCSV('usuarios_activos.csv', $datosFiltrados);
+*/
+
+// EJEMPLO 29: MIGRACIÓN ENTRE FORMATOS
+/*
+// Migrar de TXT a CSV
+$datosTXT = cargarArchivoUniversal('datos.txt', '|', false);
+guardarArrayCompletoCSV('datos_migrados.csv', $datosTXT);
+
+// Migrar de CSV a TXT
+$datosCSV = cargarDatosSUPER('datos.csv', 'auto', ',');
+guardarArrayAsociativoTXT('datos_backup.txt', $datosCSV[0], " = ");
+*/
 ?>
+
+
+
+
