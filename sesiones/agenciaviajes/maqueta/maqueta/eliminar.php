@@ -10,10 +10,10 @@ if ($id === '' || !isset($viajes[$id])) {
     exit();
 }
 
-// Inicializar array de reservas
-if (!isset($_SESSION['reservas']) || !is_array($_SESSION['reservas'])) {
+// Inicializar array de reservas (este no seria necesario)
+/* if (!isset($_SESSION['reservas']) || !is_array($_SESSION['reservas'])) {
     $_SESSION['reservas'] = [];
-}
+}*/
 
 // Eliminar de reservas
 if (($key = array_search($id, $_SESSION['reservas'])) !== false) {
