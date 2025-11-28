@@ -5,7 +5,7 @@
 
 function conectarBDD(){
     // establecer la conexion
-   $host = "localhost";
+$host = "localhost";
 $user = "usuario_tienda";
 $password = "1234";
 $base = "tienda"; 
