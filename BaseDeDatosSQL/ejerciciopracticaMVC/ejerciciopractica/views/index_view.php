@@ -5,6 +5,7 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Tienda Virtual</title>
    <style>
+       /* Estilos permanecen igual */
        body { font-family: sans-serif; padding: 20px; }
        table { border-collapse: collapse; width: 100%; margin-top: 20px;}
        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
@@ -21,9 +22,9 @@
 <body>
    <h1>Gestión de Productos</h1>
    
-   <?php if (isset($mensaje)): ?>
-       <div class="mensaje <?php echo $tipo_mensaje; ?>">
-           <?php echo $mensaje; ?>
+   <?php if (!empty($mensaje)): ?>
+       <div class="mensaje <?php echo htmlspecialchars($tipo_mensaje); ?>">
+           <?php echo htmlspecialchars($mensaje); ?>
        </div>
    <?php endif; ?>
 
@@ -50,9 +51,9 @@
            <tbody>
                <?php foreach ($lista_productos as $prod): ?>
                    <tr>
-                       <td><?php echo $prod['id_producto']; ?></td>
-                       <td><?php echo $prod['nombre']; ?></td>
-                       <td><?php echo $prod['descripcion']; ?></td>
+                       <td><?php echo htmlspecialchars($prod['id_producto']); ?></td>
+                       <td><?php echo htmlspecialchars($prod['nombre']); ?></td>
+                       <td><?php echo htmlspecialchars($prod['descripcion']); ?></td>
                        <td><?php echo number_format($prod['precio'], 2); ?> €</td>
                        <td>
                            <!-- Botón Modificar -->
@@ -63,8 +64,7 @@
                            
                            <!-- Botón Eliminar -->
                            <a href="controllers/eliminar_producto.php?id=<?php echo $prod['id_producto']; ?>" 
-                              class="btn btn-eliminar" 
-                              onclick="return confirm('¿Estás seguro de eliminar este producto?')">
+                              class="btn btn-eliminar">
                               Eliminar
                            </a>
                        </td>

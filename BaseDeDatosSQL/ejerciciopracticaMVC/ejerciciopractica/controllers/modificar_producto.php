@@ -1,10 +1,9 @@
 <?php
+session_start(); // AGREGADO: Iniciar sesión al principio
 require_once '../includes/config.php';
 require_once APP_ROOT . "/models/ProductoModels.php";
 
 $productoModel = new ProductoModels();
-$mensaje = "";
-$tipo_mensaje = "";
 
 // Obtener ID del producto a modificar
 $id_producto = $_GET['id'] ?? null;
@@ -25,11 +24,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $resultado = $productoModel->actualizarProducto($id_producto, $nombre, $descripcion, $precio);
         
         if ($resultado) {
-            $mensaje = "Producto actualizado correctamente.";
-            $tipo_mensaje = "exito";
-            // Recargar datos actualizados
-            $producto = $productoModel->obtenerProductoPorId($id_producto);
+            // Guardar mensaje en sesión para mostrar en index.php
+            $_SESSION['mensaje'] = "Producto actualizado correctamente.";
+            $_SESSION['tipo_mensaje'] = "exito";
+            
+            // Redirigir al listado principal
+            header("Location: ../index.php");
+            exit();
         } else {
+            // Mostrar error en esta misma página
             $mensaje = "Error al actualizar el producto.";
             $tipo_mensaje = "error";
         }
@@ -38,9 +41,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Si no se encontró el producto, redirigir
 if (!$producto && !$_POST) {
-    header("Location: ../index.php?mensaje=Producto no encontrado&tipo=error");
+    $_SESSION['mensaje'] = "Producto no encontrado";
+    $_SESSION['tipo_mensaje'] = "error";
+    header("Location: ../index.php");
     exit();
 }
+
+// Obtener mensajes locales para esta página (si no hubo redirección)
+$mensaje = $mensaje ?? '';
+$tipo_mensaje = $tipo_mensaje ?? '';
 ?>
 
 <!DOCTYPE html>
@@ -65,8 +74,8 @@ if (!$producto && !$_POST) {
     <h1>Modificar Producto</h1>
     
     <?php if ($mensaje): ?>
-        <div class="mensaje <?php echo $tipo_mensaje; ?>">
-            <?php echo $mensaje; ?>
+        <div class="mensaje <?php echo htmlspecialchars($tipo_mensaje); ?>">
+            <?php echo htmlspecialchars($mensaje); ?>
         </div>
     <?php endif; ?>
 
@@ -78,13 +87,12 @@ if (!$producto && !$_POST) {
         
         <div class="form-group">
             <label>Descripción:</label>
-            <!-- CORREGIDO: 'description' → 'descripcion' -->
             <textarea name="descripcion" rows="4" required><?php echo htmlspecialchars($producto['descripcion'] ?? ''); ?></textarea>
         </div>
         
         <div class="form-group">
             <label>Precio (€):</label>
-            <input type="number" name="precio" step="0.01" min="0" value="<?php echo $producto['precio'] ?? ''; ?>" required>
+            <input type="number" name="precio" step="0.01" min="0" value="<?php echo htmlspecialchars($producto['precio'] ?? ''); ?>" required>
         </div>
         
         <button type="submit" class="btn btn-guardar">💾 Guardar Cambios</button>

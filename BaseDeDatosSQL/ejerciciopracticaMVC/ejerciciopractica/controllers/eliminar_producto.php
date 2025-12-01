@@ -1,4 +1,6 @@
 <?php
+
+session_start();
 require_once '../includes/config.php';
 require_once APP_ROOT . "/models/ProductoModels.php";
 
@@ -23,7 +25,8 @@ if ($id_producto) {
     $tipo_mensaje = "error";
 }
 
-// Redirigir de vuelta al index con mensaje
-header("Location: ../index.php?mensaje=" . urlencode($mensaje) . "&tipo=" . $tipo_mensaje);
+$_SESSION['mensaje'] = $mensaje;
+
+header("Location: ../index.php", true, 302);
 exit();
 ?>

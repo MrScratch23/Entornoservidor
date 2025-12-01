@@ -1,10 +1,9 @@
 <?php
+session_start(); // AGREGADO: Iniciar sesión al principio
 require_once '../includes/config.php';
 require_once APP_ROOT . "/models/ProductoModels.php";
 
 $productoModel = new ProductoModels();
-$mensaje = "";
-$tipo_mensaje = "";
 
 // Si se envió el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -15,15 +14,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $resultado = $productoModel->crearProducto($nombre, $descripcion, $precio);
     
     if ($resultado) {
-        $mensaje = "Producto creado correctamente.";
-        $tipo_mensaje = "exito";
-        // Limpiar el formulario
-        $_POST = [];
+        // Guardar mensaje en sesión para mostrar en index.php
+        $_SESSION['mensaje'] = "Producto creado correctamente.";
+        $_SESSION['tipo_mensaje'] = "exito";
+        
+        // Redirigir al listado principal
+        header("Location: ../index.php");
+        exit();
     } else {
+        // Mostrar error en esta misma página
         $mensaje = "Error al crear el producto.";
         $tipo_mensaje = "error";
     }
 }
+
+// Obtener mensajes locales para esta página (si no hubo redirección)
+$mensaje = $mensaje ?? '';
+$tipo_mensaje = $tipo_mensaje ?? '';
 ?>
 
 <!DOCTYPE html>
@@ -48,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1>Agregar Nuevo Producto</h1>
     
     <?php if ($mensaje): ?>
-        <div class="mensaje <?php echo $tipo_mensaje; ?>">
-            <?php echo $mensaje; ?>
+        <div class="mensaje <?php echo htmlspecialchars($tipo_mensaje); ?>">
+            <?php echo htmlspecialchars($mensaje); ?>
         </div>
     <?php endif; ?>
 
@@ -66,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         <div class="form-group">
             <label>Precio (€):</label>
-            <input type="number" name="precio" step="0.01" min="0" value="<?php echo $_POST['precio'] ?? ''; ?>" required>
+            <input type="number" name="precio" step="0.01" min="0" value="<?php echo htmlspecialchars($_POST['precio'] ?? ''); ?>" required>
         </div>
         
         <button type="submit" class="btn btn-guardar">➕ Crear Producto</button>
