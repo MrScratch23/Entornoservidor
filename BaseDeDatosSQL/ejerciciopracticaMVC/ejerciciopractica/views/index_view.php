@@ -28,7 +28,7 @@
        </div>
    <?php endif; ?>
 
-   <!-- Botón para agregar nuevo producto -->
+ 
    <a href="controllers/agregar_producto.php" class="btn-agregar">
        + Agregar Nuevo Producto
    </a>
@@ -56,13 +56,13 @@
                        <td><?php echo htmlspecialchars($prod['descripcion']); ?></td>
                        <td><?php echo number_format($prod['precio'], 2); ?> €</td>
                        <td>
-                           <!-- Botón Modificar -->
+                         
                            <a href="controllers/modificar_producto.php?id=<?php echo $prod['id_producto']; ?>" 
                               class="btn btn-modificar">
                               Modificar
                            </a>
                            
-                           <!-- Botón Eliminar -->
+                          
                            <a href="controllers/eliminar_producto.php?id=<?php echo $prod['id_producto']; ?>" 
                               class="btn btn-eliminar">
                               Eliminar
