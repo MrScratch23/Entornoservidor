@@ -9,15 +9,7 @@ $mensaje = "null";
 $tipo_mensaje = "";
 
 
-$filas = $productoModel->crearProducto("Raton optico", "1200 DPI con cable", 12.50);
 
-if ($filas) {
-    $mensaje = "Producto insertado correctamente.";
-    $tipo_mensaje = "exito";
-} else {
-    $mensaje = "Error al insertar producto";
-    $tipo_mensaje = "error";
-}
 
 $lista_productos = $productoModel->obtenerTodos();
 
