@@ -5,14 +5,14 @@ require_once APP_ROOT . "/models/ProductoModels.php";
 
 $productoModel = new ProductoModels();
 
-// Obtener productos
+// obtener productos
 $lista_productos = $productoModel->obtenerTodos();
 
-// Obtener mensajes de sesión y limpiarlos
+// obtener mensajes de sesión y limpiarlos, luego los borramos
 $mensaje = $_SESSION['mensaje'] ?? '';
 $tipo_mensaje = $_SESSION['tipo_mensaje'] ?? '';
 
-// Limpiar mensajes después de obtenerlos
+
 if (isset($_SESSION['mensaje'])) {
     unset($_SESSION['mensaje']);
 }
