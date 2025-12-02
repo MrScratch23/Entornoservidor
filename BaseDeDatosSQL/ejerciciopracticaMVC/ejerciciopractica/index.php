@@ -3,7 +3,14 @@ session_start();
 require_once 'includes/config.php';
 require_once APP_ROOT . "/models/ProductoModels.php";
 
+if (!isset($_SESSION['usuario'])) {
+    header("Location: login.php", true, 302);  
+}
+
+
 $productoModel = new ProductoModels();
+
+
 
 // obtener productos
 $lista_productos = $productoModel->obtenerTodos();

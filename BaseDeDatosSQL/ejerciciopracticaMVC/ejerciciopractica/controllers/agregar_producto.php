@@ -4,6 +4,7 @@ require_once '../includes/config.php';
 require_once APP_ROOT . "/models/ProductoModels.php";
 
 $productoModel = new ProductoModels();
+$errores = [];
 
 // Si se envió el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -11,7 +12,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $descripcion = $_POST['descripcion'] ?? '';
     $precio = $_POST['precio'] ?? 0;
     
-    $resultado = $productoModel->crearProducto($nombre, $descripcion, $precio);
+
+    if ($nombre === '') {
+        $errores['nombre'] = "El campo nombre debe debe estar relleno.";
+    }
+    if ($precio === '') {
+        $errores['precio'] = "El precio debe estar relleno.";
+    }
+
+    if (empty($errores)) {
+        $resultado = $productoModel->crearProducto($nombre, $descripcion, $precio);
     
     if ($resultado) {
         // Guardar mensaje en sesión para mostrar en index.php
@@ -26,6 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mensaje = "Error al crear el producto.";
         $tipo_mensaje = "error";
     }
+    }
+
+    
 }
 
 // Obtener mensajes locales para esta página (si no hubo redirección)
@@ -63,17 +76,23 @@ $tipo_mensaje = $tipo_mensaje ?? '';
     <form method="POST">
         <div class="form-group">
             <label>Nombre:</label>
-            <input type="text" name="nombre" value="<?php echo htmlspecialchars($_POST['nombre'] ?? ''); ?>" required>
+            <input type="text" name="nombre" value="<?php echo htmlspecialchars($_POST['nombre'] ?? ''); ?>">
+        <?php if (isset($errores['nombre'])): ?>
+            <br><span style="color: red;"><?php echo $errores['nombre']; ?></span>
+        <?php endif; ?>
         </div>
         
         <div class="form-group">
             <label>Descripción:</label>
-            <textarea name="descripcion" rows="4" required><?php echo htmlspecialchars($_POST['descripcion'] ?? ''); ?></textarea>
+            <textarea name="descripcion" rows="4"><?php echo htmlspecialchars($_POST['descripcion'] ?? ''); ?></textarea>
         </div>
         
         <div class="form-group">
             <label>Precio (€):</label>
-            <input type="number" name="precio" step="0.01" min="0" value="<?php echo htmlspecialchars($_POST['precio'] ?? ''); ?>" required>
+            <input type="number" name="precio" step="0.01" min="0" value="<?php echo htmlspecialchars($_POST['precio'] ?? ''); ?>">
+            <?php if (isset($errores['precio'])): ?>
+                <br><span style="color: red;"><?php echo $errores['precio']; ?></span>
+            <?php endif; ?>
         </div>
         
         <button type="submit" class="btn btn-guardar">➕ Crear Producto</button>

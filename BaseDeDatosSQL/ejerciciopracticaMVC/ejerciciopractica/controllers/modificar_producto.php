@@ -7,7 +7,7 @@ $productoModel = new ProductoModels();
 
 // Obtener ID del producto a modificar
 $id_producto = $_GET['id'] ?? null;
-
+$errores = [];
 // Obtener datos actuales del producto
 $producto = null;
 if ($id_producto) {
@@ -18,8 +18,18 @@ if ($id_producto) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = $_POST['nombre'] ?? '';
     $descripcion = $_POST['descripcion'] ?? '';
-    $precio = $_POST['precio'] ?? 0;
+    $precio = $_POST['precio'] ?? '';
+
     
+    if ($nombre === '') {
+        $errores['nombre'] = "El campo nombre debe debe estar relleno.";
+    }
+    if ($precio === '') {
+        $errores['precio'] = "El precio debe estar relleno.";
+    }
+
+if (empty($errores)) {
+       
     if ($id_producto) {
         $resultado = $productoModel->actualizarProducto($id_producto, $nombre, $descripcion, $precio);
         
@@ -36,6 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mensaje = "Error al actualizar el producto.";
             $tipo_mensaje = "error";
         }
+}
+
+ 
     }
 }
 
@@ -82,17 +95,23 @@ $tipo_mensaje = $tipo_mensaje ?? '';
     <form method="POST">
         <div class="form-group">
             <label>Nombre:</label>
-            <input type="text" name="nombre" value="<?php echo htmlspecialchars($producto['nombre'] ?? ''); ?>" required>
+            <input type="text" name="nombre" value="<?php echo htmlspecialchars($producto['nombre'] ?? ''); ?>" >
+            <?php if (isset($errores['nombre'])): ?>
+                <br><span style="color: red;"><?php echo $errores['nombre']; ?></span>
+            <?php endif; ?>
         </div>
         
         <div class="form-group">
             <label>Descripción:</label>
-            <textarea name="descripcion" rows="4" required><?php echo htmlspecialchars($producto['descripcion'] ?? ''); ?></textarea>
+            <textarea name="descripcion" rows="4"><?php echo htmlspecialchars($producto['descripcion'] ?? ''); ?></textarea>
         </div>
         
         <div class="form-group">
             <label>Precio (€):</label>
-            <input type="number" name="precio" step="0.01" min="0" value="<?php echo htmlspecialchars($producto['precio'] ?? ''); ?>" required>
+            <input type="number" name="precio" step="0.01" min="0" value="<?php echo htmlspecialchars($producto['precio'] ?? ''); ?>" >
+            <?php if (isset($errores['precio'])): ?>
+                <br><span style="color: red;"><?php echo $errores['precio']; ?></span>
+            <?php endif; ?>
         </div>
         
         <button type="submit" class="btn btn-guardar">💾 Guardar Cambios</button>
