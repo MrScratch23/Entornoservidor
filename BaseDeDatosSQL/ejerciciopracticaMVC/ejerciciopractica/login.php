@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $autenticado = $loginModel->autentificarUsuario($usuario, $password);
         
         if ($autenticado) { 
-            echo "Valido";
+         
             $_SESSION['usuario'] = $usuario;
              header("Location: index.php", true, 302);
             exit();

@@ -1,3 +1,14 @@
+<?php
+// la sesion ya esta iniciada, no haria falta
+// session_start();
+
+if (!isset($_SESSION['usuario'])) {
+    header("Location: login.php", true, 302);
+    exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -17,21 +28,26 @@
        .btn-eliminar { background-color: #dc3545; color: white; }
        .btn-modificar { background-color: #ffc107; color: black; }
        .btn-agregar { background-color: #28a745; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; display: inline-block; margin-bottom: 20px; }
+       .btn-salir { background-color: #6c757d; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; display: inline-block; margin-left: 10px; }
    </style>
 </head>
 <body>
    <h1>Gestión de Productos</h1>
+   
+   <div style="margin-bottom: 20px;">
+       <a href="controllers/agregar_producto.php" class="btn-agregar">
+           + Agregar Nuevo Producto
+       </a>
+       <a href="controllers/cerrar_sesion.php" class="btn-salir">
+           Cerrar Sesión
+       </a>
+   </div>
    
    <?php if (!empty($mensaje)): ?>
        <div class="mensaje <?php echo htmlspecialchars($tipo_mensaje); ?>">
            <?php echo htmlspecialchars($mensaje); ?>
        </div>
    <?php endif; ?>
-
- 
-   <a href="controllers/agregar_producto.php" class="btn-agregar">
-       + Agregar Nuevo Producto
-   </a>
 
    <h2>Listado de Productos</h2>
    
