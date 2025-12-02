@@ -1,5 +1,6 @@
 <?php
-require_once APP_ROOT . "/includes/config.php";
+session_start();
+require_once 'includes/config.php';
 require_once APP_ROOT . "/models/LoginModel.php";
 
 $errores = [];
@@ -8,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    echo password_hash($password, PASSWORD_DEFAULT);
+    
 
 
     if ($usuario === '') {
@@ -23,7 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $autenticado = $loginModel->autentificarUsuario($usuario, $password);
         
         if ($autenticado) { 
-            header("Location: index.php", true, 302);
+            echo "Valido";
+            $_SESSION['usuario'] = $usuario;
+             header("Location: index.php", true, 302);
             exit();
         } else {
             $errores['general'] = "Usuario o contraseña incorrectos";
