@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 require_once '../includes/config.php';
 require_once APP_ROOT . "/models/ProductoModels.php";
@@ -25,7 +24,9 @@ if ($id_producto) {
     $tipo_mensaje = "error";
 }
 
+
 $_SESSION['mensaje'] = $mensaje;
+$_SESSION['tipo_mensaje'] = $tipo_mensaje; 
 
 header("Location: ../index.php", true, 302);
 exit();

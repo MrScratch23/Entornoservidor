@@ -5,6 +5,12 @@ require_once APP_ROOT . "/models/LoginModel.php";
 
 $errores = [];
 
+if (isset($_SESSION['usuario'])) {
+    header("Location: index.php", true, 302);
+    exit();
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
@@ -346,15 +352,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php endif; ?>
                 </div>
 
-                <div class="remember-forgot">
-                    <label class="remember-me">
-                        <input type="checkbox" name="remember">
-                        Recordar mi usuario
-                    </label>
-                    <a href="recuperar.php" class="forgot-password">
-                        ¿Olvidaste tu contraseña?
-                    </a>
-                </div>
+              
 
                 <button type="submit" class="login-button">
                     Iniciar Sesión

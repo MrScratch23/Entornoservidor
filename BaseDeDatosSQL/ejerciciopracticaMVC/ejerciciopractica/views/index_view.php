@@ -1,11 +1,16 @@
 <?php
-// la sesion ya esta iniciada, no haria falta
+
 // session_start();
 
 if (!isset($_SESSION['usuario'])) {
     header("Location: login.php", true, 302);
     exit();
 }
+
+
+
+
+
 
 ?>
 
