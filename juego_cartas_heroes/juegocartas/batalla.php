@@ -1,13 +1,10 @@
 <?php
-/*
-    Página de batalla - Menú principal
-    Autor: P.Lluyot
-    Examen-2 de DWES - Curso 2025-2026
-*/
+
 
 session_start();
 require_once "datos.php";
 
+// como siempre para atras para seguridad
 if (!isset($_SESSION['usuario'])) {
     header("Location: index.php");
     exit();
@@ -33,17 +30,17 @@ if ($totalHeroes === 0) {
     exit();
 }
 
-// Si el equipo de la IA no está creado, crearlo
+// si el equipo de la IA no está creado, crearlo
 if (!isset($_SESSION['equipo_ia']) || empty($_SESSION['equipo_ia'])) {
     crearEquipoIA();
 }
 
-// Función para crear equipo IA
+// funcion para el equipo enemigo cogiendo heroes aleatorios
 function crearEquipoIA() {
     global $heroes;
     $todasLasClases = [];
     
-    // Obtener todas las clases únicas
+    // forma de obtener todas las clases únicas
     foreach (HEROES as $heroe) {
         $clase = $heroe['clase'];
         if (!in_array($clase, $todasLasClases)) {
@@ -51,7 +48,7 @@ function crearEquipoIA() {
         }
     }
     
-    // Seleccionar un héroe aleatorio de cada clase (máximo 1 por clase)
+    // seccionar un héroe aleatorio de cada clase (máximo 1 por clase)
     $equipoIA = [];
     $presupuestoIA = PRESUPUESTO_INICIAL;
     
@@ -72,30 +69,31 @@ function crearEquipoIA() {
             }
         }
         
-        // Máximo 6 héroes para la IA
+        // máximo 6 héroes para la IA, ¿break seria mala idea?
         if (count($equipoIA) >= 6) break;
     }
     
     $_SESSION['equipo_ia'] = $equipoIA;
-    $_SESSION['heroes_disponibles_ia'] = $equipoIA; // Copia para control de turnos
+    $_SESSION['heroes_disponibles_ia'] = $equipoIA; // copia para control de turnos
 }
 
-// Procesar inicio de batalla
+// Procesar inicio de batalla, aqui ya voy creando las sesines
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['iniciar_batalla'])) {
     $_SESSION['vida_jugador'] = 100;
     $_SESSION['vida_ia'] = 100;
     $_SESSION['ronda_actual'] = 1;
+    // log para guardar los textos
     $_SESSION['log_batalla'] = [];
     $_SESSION['heroes_disponibles_jugador'] = $heroes;
     $_SESSION['heroes_disponibles_ia'] = $_SESSION['equipo_ia'];
     
-    // Seleccionar primer héroe para jugador
+    // seleccionar primer héroe para jugador
     $_SESSION['heroe_actual_jugador'] = $_SESSION['heroes_disponibles_jugador'][0] ?? null;
     
-    // Seleccionar primer héroe para IA
+    // seleccionar primer héroe para IA
     $_SESSION['heroe_actual_ia'] = $_SESSION['heroes_disponibles_ia'][0] ?? null;
     
-    // Añadir al log
+    // Añadir al log, de momento solo es texto
     agregarLog("¡La batalla ha comenzado!");
     agregarLog("Jugador: " . $_SESSION['usuario'] . " vs IA");
     
@@ -103,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['iniciar_batalla'])) {
     exit();
 }
 
-// Función para agregar mensajes al log
+// función para agregar mensajes al log
 function agregarLog($mensaje) {
     $_SESSION['log_batalla'][] = [
         'ronda' => $_SESSION['ronda_actual'] ?? 1,
@@ -111,7 +109,7 @@ function agregarLog($mensaje) {
         'timestamp' => date('H:i:s')
     ];
     
-    // Mantener solo los últimos 20 mensajes
+    // mantener solo los últimos 20 mensajes, por si fuera una aplicacion mas grande
     if (count($_SESSION['log_batalla']) > 20) {
         array_shift($_SESSION['log_batalla']);
     }

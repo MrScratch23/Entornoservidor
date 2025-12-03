@@ -1,9 +1,4 @@
 <?php
-/*
-    Página de resultado de batalla
-    Autor: P.Lluyot
-    Examen-2 de DWES - Curso 2025-2026
-*/
 
 session_start();
 

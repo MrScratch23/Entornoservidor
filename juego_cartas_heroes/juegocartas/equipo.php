@@ -82,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             foreach ($equipoActual as $heroeEquipo) {
                 if ($heroeEquipo['id'] === $id_heroe) {
                     $enEquipo = true;
+                    // intentar modificar para que no sea break, que queda mal y es poco seguro, de momento dejarlo asi hasta solucionarlo
                     break;
                 }
             }
@@ -121,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
-    // Redirigir para evitar reenvío del formulario
+    // redireccion
     header("Location: equipo.php");
     exit();
 }
@@ -171,6 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <a href="analisis.php" class="text-center py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-200">
                         Ver Análisis
                     </a>
+                    <!-- Esta es la pagina de batalla que agrege yo -->
                     <a href="batalla.php" class="text-center py-2 px-4 bg-gradient-to-r from-red-600 to-yellow-600 text-white font-semibold rounded-lg shadow-md hover:from-red-700 hover:to-yellow-700 transition duration-200">
                         ⚔️ Ir a Batalla
                     </a>
@@ -197,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php unset($_SESSION['mensajeflash']); ?>
             <?php endif; ?>
 
-            <!-- Estadísticas rápidas del equipo -->
+            
             <div class="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-white p-4 rounded-lg shadow">
                     <p class="text-sm text-slate-500">Presupuesto Inicial</p>
@@ -221,7 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                 <?php foreach ($arrayHeroes as $heroe): ?>
                     <?php
-                    // Determinar si el héroe está en el equipo
+                    // buscar si el héroe está en el equipo
                     $enEquipo = false;
                     foreach ($equipoActual as $heroeEquipo) {
                         if ($heroeEquipo['id'] === $heroe['id']) {
@@ -230,10 +232,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         }
                     }
                     
-                    // Determinar si hay presupuesto suficiente
+                    // determinar si hay presupuesto suficiente
                     $sinPresupuesto = $heroe['coste'] > $presupuesto;
                     
-                    // Determinar clases CSS
+                    // ahora si sta determinada la clase CSS
                     $claseTarjeta = 'rounded-lg shadow-xl overflow-hidden relative h-[420px] group transition-transform duration-300 hover:scale-[1.02]';
                     
                     if ($enEquipo) {
@@ -362,7 +364,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
         </section>
         
-        <!-- Pie de página con autor y curso -->
+
         <footer class="text-center text-sm text-gray-500 mt-10 pt-6 border-t border-gray-200">
             © 2025 P.Lluyot · Examen de DWES
         </footer>

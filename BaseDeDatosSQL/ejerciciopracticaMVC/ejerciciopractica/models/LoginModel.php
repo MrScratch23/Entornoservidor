@@ -26,7 +26,7 @@ class LoginModel {
     }
     
     $hashAlmacenado = $resultado[0]['password'];
-    return password_verify($password, $hashAlmacenado);
+    return password_verify($password, $hashAlmacenado); // esto me tiene que devolver true o false
 }
 
 }

@@ -1,18 +1,15 @@
 <?php
-/*
-    Página de combate por turnos
-    Autor: P.Lluyot
-    Examen-2 de DWES - Curso 2025-2026
-*/
+
 
 session_start();
 
+// lo de siempre para seguridad
 if (!isset($_SESSION['usuario']) || !isset($_SESSION['heroe_actual_jugador'])) {
     header("Location: batalla.php");
     exit();
 }
 
-// Función para agregar mensajes al log
+// la misma función para agregar mensajes al log
 function agregarLog($mensaje) {
     $_SESSION['log_batalla'][] = [
         'ronda' => $_SESSION['ronda_actual'] ?? 1,
@@ -26,7 +23,7 @@ function agregarLog($mensaje) {
     }
 }
 
-// Función para calcular daño
+// función para calcular daño
 function calcularDaño($atacante, $defensor) {
     $ataqueBase = $atacante['ataque'];
     $defensaOponente = $defensor['defensa'];
@@ -43,7 +40,7 @@ function calcularDaño($atacante, $defensor) {
     return max(1, floor($daño));
 }
 
-// Función para cambiar al siguiente héroe
+// función para cambiar al siguiente héroe
 function siguienteHeroe(&$equipo, &$heroeActual) {
     if (empty($equipo)) return null;
     
@@ -56,7 +53,7 @@ function siguienteHeroe(&$equipo, &$heroeActual) {
     return $equipo[$siguienteClave];
 }
 
-// Procesar ataque del jugador
+// procesar ataque del jugador, esto la mayoria esta hecho con deepseek para los emojis, sinceramente 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['atacar'])) {
         // Turno del jugador
@@ -111,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $_SESSION['ronda_actual']++;
         
-        // Redirigir para evitar reenvío del formulario
+        // redirigir para evitar reenvío del formulario, si mal no recuerdo era asi  
         header("Location: combate.php");
         exit();
     }
@@ -129,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Función para crear barra de vida
+// Función para crear barra de vida, creada con css
 function crearBarraVida($vida, $color) {
     $porcentaje = min(100, max(0, $vida));
     return '
