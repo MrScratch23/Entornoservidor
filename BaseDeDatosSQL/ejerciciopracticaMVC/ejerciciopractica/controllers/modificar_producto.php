@@ -1,5 +1,5 @@
 <?php
-session_start(); // AGREGADO: Iniciar sesión al principio
+session_start();
 require_once '../includes/config.php';
 require_once APP_ROOT . "/models/ProductoModels.php";
 
