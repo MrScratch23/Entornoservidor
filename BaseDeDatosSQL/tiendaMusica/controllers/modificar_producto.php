@@ -11,6 +11,8 @@ if (!isset($_SESSION['usuario'])) {
 
 $productoModel = new ProductoModels();
 
+
+
 // Inicializar variables (IMPORTANTE: hacerlo al principio)
 $errores = [];
 $mensaje = '';
