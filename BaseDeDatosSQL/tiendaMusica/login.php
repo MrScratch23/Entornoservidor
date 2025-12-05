@@ -42,11 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'rol' => $datosUsuario[0]['rol']
                 ];
             } else {
-                // Fallback por si algo sale mal
                 $_SESSION['usuario'] = $usuario;
             }
             
-            // Redirigir al dashboard
             header("Location: index.php", true, 302);
             exit();
         } else {
@@ -175,15 +173,91 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 17px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 15px;
         }
 
         .login-button:hover {
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
 
         .login-button:active {
             transform: translateY(0);
+        }
+
+        .register-button {
+            width: 100%;
+            padding: 16px;
+            background-color: #f8f9fa;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .register-button:hover {
+            background-color: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .register-button:active {
+            transform: translateY(0);
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .separator {
+            text-align: center;
+            margin: 10px 0;
+            color: #666;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .separator::before,
+        .separator::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background-color: #ddd;
+        }
+
+        .separator::before {
+            left: 0;
+        }
+
+        .separator::after {
+            right: 0;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 15px;
+        }
+
+        .register-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .register-link a:hover {
+            color: #764ba2;
+            text-decoration: underline;
         }
 
         @media (max-width: 480px) {
@@ -237,9 +311,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php endif; ?>
                 </div>
 
-                <button type="submit" class="login-button">
-                    Iniciar Sesión
-                </button>
+                <div class="button-container">
+                    <button type="submit" class="login-button">
+                        Iniciar Sesión
+                    </button>
+                    
+                    <div class="separator">o</div>
+                              
+                
+                <div class="register-link">
+                    ¿No tienes una cuenta? <a href="registro.php">Regístrate aquí</a>
+                </div>
             </form>
         </div>
     </div>

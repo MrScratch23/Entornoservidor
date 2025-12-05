@@ -5,6 +5,9 @@ if (!isset($_SESSION['usuario'])) {
     header("Location: ../index.php", true, 302);
     exit();
 }
+
+$usuario = $_SESSION['usuario'];
+
 ?>
 
 <!DOCTYPE html>
@@ -291,7 +294,9 @@ if (!isset($_SESSION['usuario'])) {
                         <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Precio</th>
+                        <?php if ($usuario['rol'] === "admin") :?>
                         <th>Acciones</th>
+                        <?php endif ?>
                     </tr>
                 </thead>
                 <tbody>
@@ -302,6 +307,8 @@ if (!isset($_SESSION['usuario'])) {
                             <td><?php echo htmlspecialchars($prod['descripcion']); ?></td>
                             <td><strong><?php echo number_format($prod['precio'], 2); ?> €</strong></td>
                             <td>
+                          
+                                <?php if ($usuario['rol'] === "admin") :?>
                                 <div class="actions">
                                     <a href="views/modificar_producto_view.php?id=<?php echo $prod['id_producto']; ?>" 
                                        class="btn-action btn-modificar">
@@ -312,6 +319,7 @@ if (!isset($_SESSION['usuario'])) {
                                         Eliminar
                                     </a>
                                 </div>
+                                <?php endif ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
