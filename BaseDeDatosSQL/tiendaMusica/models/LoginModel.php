@@ -30,5 +30,35 @@ class LoginModel {
         
         return false; 
     }
+
+
+
+
+    public function autentificarUsuarioEmailPassWord($email, $password) {
+        // Consulta usando email en lugar de usuario
+        $sql = "SELECT id, usuario, password, rol, email FROM usuarios WHERE email = ?";
+        
+        $resultado = $this->db->executeQuery($sql, [$email]);
+                                             
+        if (empty($resultado)) {
+            return false; // Email no existe
+        }
+        
+        $hashAlmacenado = $resultado[0]['password'];
+
+        if (password_verify($password, $hashAlmacenado)) {
+            return [
+                'id' => $resultado[0]['id'],
+                'nombre' => $resultado[0]['usuario'],
+                'rol' => $resultado[0]['rol'],
+                'email' => $resultado[0]['email'] 
+            ];
+        }
+        
+        return false; 
+    }
 }
 ?>
+
+
+

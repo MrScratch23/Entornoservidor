@@ -31,7 +31,7 @@ class ProductoModels {
     }
 
     public function actualizarProducto($id_producto, $nombre, $descripcion, $precio) {
-        // ERROR: 'description' debería ser 'descripcion'
+        
         $sql = "UPDATE productos SET nombre = ?, descripcion = ?, precio = ? WHERE id_producto = ?";
         return $this->db->executeUpdate($sql, [$nombre, $descripcion, $precio, $id_producto]);
     }
