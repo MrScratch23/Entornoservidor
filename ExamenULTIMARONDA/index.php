@@ -140,7 +140,7 @@ $n_tickets = count($tickets);
                                         <span class="status-resuelta">
                                             <?php echo $ticket['estado'] ?> </span>
                                      <?php endif; ?>      
-
+                                        
                                 </td>
                                 <td><?php echo $ticket['tipo_incidencia'] ?></td>
                                 <td style="font-weight: 600;">
