@@ -1,6 +1,7 @@
 /**
  * Archivo: personajes.js
  * Manejo de filtros con JavaScript para la página de personajes
+ * VERSIÓN CORREGIDA - Usa datos reales de la BD
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -18,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const resultadosCount = document.getElementById('resultadosCount');
     const resetContainer = document.getElementById('resetContainer');
     const resetBtn = document.getElementById('resetBtn');
-    const totalPersonajes = document.getElementById('totalPersonajes');
     
     // Estado de los filtros
     let filtrosActivos = {
@@ -32,38 +32,71 @@ document.addEventListener('DOMContentLoaded', function() {
     inicializarFiltros();
     
     // Event Listeners
-    buscarBtn.addEventListener('click', aplicarBusqueda);
-    buscarInput.addEventListener('keyup', function(e) {
-        if (e.key === 'Enter') {
-            aplicarBusqueda();
-        }
-    });
+    if (buscarBtn) buscarBtn.addEventListener('click', aplicarBusqueda);
+    if (buscarInput) {
+        buscarInput.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                aplicarBusqueda();
+            }
+        });
+    }
     
-    rarezaBtn.addEventListener('click', function() {
+    if (rarezaBtn) rarezaBtn.addEventListener('click', function() {
         aplicarFiltro('rareza', rarezaSelect.value);
     });
     
-    rutaBtn.addEventListener('click', function() {
+    if (rutaBtn) rutaBtn.addEventListener('click', function() {
         aplicarFiltro('ruta', rutaSelect.value);
     });
     
-    elementoBtn.addEventListener('click', function() {
+    if (elementoBtn) elementoBtn.addEventListener('click', function() {
         aplicarFiltro('elemento', elementoSelect.value);
     });
     
-    resetBtn.addEventListener('click', resetearFiltros);
+    if (resetBtn) resetBtn.addEventListener('click', resetearFiltros);
     
     // Función para inicializar los filtros
     function inicializarFiltros() {
-        // Cargar personajes iniciales
-        mostrarPersonajes(window.personajesData);
+        // Los personajes ya están cargados en el HTML desde PHP
+        // Solo actualizamos el contador
+        if (window.personajesData) {
+            actualizarContador(window.personajesData.length);
+        }
         
-        // Actualizar contador inicial
-        actualizarContador(window.personajesData.length);
+        // Configurar eventos automáticos para selects
+        if (rarezaSelect) {
+            rarezaSelect.addEventListener('change', function() {
+                aplicarFiltro('rareza', this.value);
+            });
+        }
+        
+        if (rutaSelect) {
+            rutaSelect.addEventListener('change', function() {
+                aplicarFiltro('ruta', this.value);
+            });
+        }
+        
+        if (elementoSelect) {
+            elementoSelect.addEventListener('change', function() {
+                aplicarFiltro('elemento', this.value);
+            });
+        }
+        
+        // Filtro automático mientras se escribe
+        if (buscarInput) {
+            let timeoutBusqueda;
+            buscarInput.addEventListener('input', function() {
+                clearTimeout(timeoutBusqueda);
+                timeoutBusqueda = setTimeout(() => {
+                    aplicarBusqueda();
+                }, 300);
+            });
+        }
     }
     
     // Función para aplicar búsqueda por texto
     function aplicarBusqueda() {
+        if (!buscarInput) return;
         const textoBusqueda = buscarInput.value.trim().toLowerCase();
         filtrosActivos.busqueda = textoBusqueda;
         aplicarFiltrosCombinados();
@@ -71,102 +104,87 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Función para aplicar un filtro específico
     function aplicarFiltro(tipo, valor) {
-        if (tipo === 'rareza') {
-            filtrosActivos.rareza = valor;
-        } else if (tipo === 'ruta') {
-            filtrosActivos.ruta = valor;
-        } else if (tipo === 'elemento') {
-            filtrosActivos.elemento = valor;
-        }
+        filtrosActivos[tipo] = valor;
         aplicarFiltrosCombinados();
     }
     
     // Función para aplicar todos los filtros combinados
     function aplicarFiltrosCombinados() {
-        const personajesFiltrados = window.personajesData.filter(personaje => {
-            // Filtro por búsqueda de texto
-            if (filtrosActivos.busqueda && 
-                !personaje.nombre.toLowerCase().includes(filtrosActivos.busqueda)) {
-                return false;
+        // Obtener todas las cards de personaje del HTML
+        const todasLasCards = document.querySelectorAll('.character-card');
+        
+        if (todasLasCards.length === 0) return;
+        
+        let resultadosVisibles = 0;
+        
+        // Filtrar las cards basándonos en los datos y los filtros
+        todasLasCards.forEach(card => {
+            const cardRareza = card.dataset.rareza;
+            const cardRuta = card.dataset.ruta;
+            const cardElemento = card.dataset.elemento;
+            const cardNombre = card.dataset.nombre;
+            
+            let mostrar = true;
+            
+            // Aplicar filtro de búsqueda
+            if (filtrosActivos.busqueda) {
+                if (!cardNombre.includes(filtrosActivos.busqueda.toLowerCase())) {
+                    mostrar = false;
+                }
             }
             
-            // Filtro por rareza
-            if (filtrosActivos.rareza && personaje.rareza !== filtrosActivos.rareza) {
-                return false;
+            // Aplicar filtro de rareza
+            if (filtrosActivos.rareza && cardRareza !== filtrosActivos.rareza) {
+                mostrar = false;
             }
             
-            // Filtro por ruta
-            if (filtrosActivos.ruta && personaje.ruta !== filtrosActivos.ruta) {
-                return false;
+            // Aplicar filtro de ruta
+            if (filtrosActivos.ruta && cardRuta !== filtrosActivos.ruta) {
+                mostrar = false;
             }
             
-            // Filtro por elemento
-            if (filtrosActivos.elemento && personaje.elemento !== filtrosActivos.elemento) {
-                return false;
+            // Aplicar filtro de elemento
+            if (filtrosActivos.elemento && cardElemento !== filtrosActivos.elemento) {
+                mostrar = false;
             }
             
-            return true;
+            // Mostrar u ocultar la card
+            if (mostrar) {
+                card.style.display = 'block';
+                resultadosVisibles++;
+            } else {
+                card.style.display = 'none';
+            }
         });
         
-        mostrarPersonajes(personajesFiltrados);
-        actualizarContador(personajesFiltrados.length);
-        actualizarUIEstadoFiltros();
-    }
-    
-    // Función para mostrar personajes en el grid
-    function mostrarPersonajes(personajes) {
-        charactersGrid.innerHTML = '';
-        
-        if (personajes.length === 0) {
-            charactersGrid.innerHTML = `
-                <div class="no-results">
+        // Mostrar mensaje si no hay resultados
+        const noResultsEl = document.querySelector('.no-results');
+        if (resultadosVisibles === 0) {
+            if (!noResultsEl) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.innerHTML = `
                     <h3>🚫 No se encontraron personajes</h3>
                     <p>Intenta con otros filtros o términos de búsqueda.</p>
-                </div>
-            `;
-            return;
+                `;
+                charactersGrid.appendChild(noResults);
+            }
+        } else if (noResultsEl) {
+            noResultsEl.remove();
         }
         
-        personajes.forEach(personaje => {
-            const card = document.createElement('div');
-            card.className = 'character-card';
-            card.setAttribute('data-rareza', personaje.rareza);
-            card.setAttribute('data-ruta', personaje.ruta);
-            card.setAttribute('data-elemento', personaje.elemento);
-            card.setAttribute('data-nombre', personaje.nombre.toLowerCase());
-            
-            const rarezaClass = personaje.rareza === '5 estrellas' ? 'gold' : 'purple';
-            
-            card.innerHTML = `
-                <img src="${personaje.imagen_url}" 
-                     alt="${personaje.nombre}"
-                     class="character-image">
-                <div class="character-info">
-                    <h3 class="character-name">${personaje.nombre}</h3>
-                    <div class="character-meta">
-                        <span class="rareza ${rarezaClass}" data-rarity="${personaje.rareza}">
-                            ${personaje.rareza}
-                        </span>
-                        <span class="ruta">${personaje.ruta}</span>
-                    </div>
-                    <div style="margin: 8px 0;">
-                        <span class="elemento">${personaje.elemento}</span>
-                    </div>
-                    <p class="character-desc">
-                        ${personaje.descripcion}
-                    </p>
-                </div>
-            `;
-            
-            charactersGrid.appendChild(card);
-        });
+        actualizarContador(resultadosVisibles);
+        actualizarUIEstadoFiltros();
     }
     
     // Función para actualizar el contador de resultados
     function actualizarContador(cantidad) {
+        if (!resultadosCount || !contadorResultados) return;
+        
         resultadosCount.textContent = cantidad;
         
-        if (cantidad !== window.personajesData.length) {
+        const totalPersonajes = document.querySelectorAll('.character-card').length;
+        if (cantidad !== totalPersonajes) {
             contadorResultados.style.display = 'flex';
         } else {
             contadorResultados.style.display = 'none';
@@ -181,26 +199,8 @@ document.addEventListener('DOMContentLoaded', function() {
             filtrosActivos.ruta || 
             filtrosActivos.elemento;
         
-        if (hayFiltrosActivos) {
-            resetContainer.style.display = 'block';
-            
-            // Actualizar selects para reflejar filtros activos
-            if (filtrosActivos.rareza) {
-                rarezaSelect.value = filtrosActivos.rareza;
-            }
-            if (filtrosActivos.ruta) {
-                rutaSelect.value = filtrosActivos.ruta;
-            }
-            if (filtrosActivos.elemento) {
-                elementoSelect.value = filtrosActivos.elemento;
-            }
-        } else {
-            resetContainer.style.display = 'none';
-            
-            // Limpiar selects
-            rarezaSelect.value = '';
-            rutaSelect.value = '';
-            elementoSelect.value = '';
+        if (resetContainer) {
+            resetContainer.style.display = hayFiltrosActivos ? 'block' : 'none';
         }
     }
     
@@ -217,42 +217,25 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         
         // Limpiar inputs
-        buscarInput.value = '';
-        rarezaSelect.value = '';
-        rutaSelect.value = '';
-        elementoSelect.value = '';
+        if (buscarInput) buscarInput.value = '';
+        if (rarezaSelect) rarezaSelect.value = '';
+        if (rutaSelect) rutaSelect.value = '';
+        if (elementoSelect) elementoSelect.value = '';
         
         // Mostrar todos los personajes
-        mostrarPersonajes(window.personajesData);
-        actualizarContador(window.personajesData.length);
+        const todasLasCards = document.querySelectorAll('.character-card');
+        todasLasCards.forEach(card => {
+            card.style.display = 'block';
+        });
+        
+        // Remover mensaje de no resultados si existe
+        const noResultsEl = document.querySelector('.no-results');
+        if (noResultsEl) {
+            noResultsEl.remove();
+        }
+        
+        const totalPersonajes = document.querySelectorAll('.character-card').length;
+        actualizarContador(totalPersonajes);
         actualizarUIEstadoFiltros();
     }
-    
-    // Opcional: Filtro automático mientras se escribe (con debounce)
-    let timeoutBusqueda;
-    buscarInput.addEventListener('input', function() {
-        clearTimeout(timeoutBusqueda);
-        timeoutBusqueda = setTimeout(() => {
-            aplicarBusqueda();
-        }, 300);
-    });
-    
-    // Opcional: Cambios en selects sin necesidad de botón
-    rarezaSelect.addEventListener('change', function() {
-        if (this.value) {
-            aplicarFiltro('rareza', this.value);
-        }
-    });
-    
-    rutaSelect.addEventListener('change', function() {
-        if (this.value) {
-            aplicarFiltro('ruta', this.value);
-        }
-    });
-    
-    elementoSelect.addEventListener('change', function() {
-        if (this.value) {
-            aplicarFiltro('elemento', this.value);
-        }
-    });
 });

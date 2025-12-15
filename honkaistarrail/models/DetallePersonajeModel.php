@@ -25,7 +25,7 @@ class DetallePersonajeModel {
     
     public function obtenerHabilidades($id_personaje) {
         $sql = "SELECT * FROM habilidades_personaje WHERE id_personaje = ? ORDER BY 
-                CASE tipo 
+                CASE tipo   
                     WHEN 'Básica' THEN 1
                     WHEN 'Habilidad' THEN 2
                     WHEN 'Definitiva' THEN 3

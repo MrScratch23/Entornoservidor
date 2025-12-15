@@ -53,6 +53,21 @@ $cuatro_estrellas = $total - $cinco_estrellas;
     <link rel="stylesheet" href="personajes.css">
     <!-- CSS para detalles de personajes -->
     <link rel="stylesheet" href="detalles-personaje.css">
+    <!-- TODOS LOS SCRIPTS AL FINAL DEL BODY -->
+    <script>
+        // Pasar los personajes desde PHP a JavaScript
+        window.personajesData = <?php echo json_encode($personajes_array); ?>;
+        // Pasar el ID del usuario actual para los comentarios
+        window.currentUserId = <?php echo $_SESSION['usuario_id']; ?>;
+        window.currentUserUsername = '<?php echo $_SESSION['usuario_nombre'] ?? 'Usuario'; ?>';
+        window.currentUserName = '<?php echo htmlspecialchars($usuario_actual['nombre'] ?? $_SESSION['usuario_nombre'] ?? 'Usuario'); ?>';
+    </script>
+    
+    <!-- JavaScript para los filtros -->
+    <script src="personajes.js" defer></script>
+    
+    <!-- JavaScript para detalles de personajes -->
+    <script src="detalles-personaje.js" defer></script>
 </head>
 <body class="personajes-page">
     <!-- Header -->
@@ -271,18 +286,6 @@ $cuatro_estrellas = $total - $cinco_estrellas;
         </p>
     </footer>
 
-    <!-- TODOS LOS SCRIPTS AL FINAL DEL BODY -->
-    <script>
-        // Pasar los personajes desde PHP a JavaScript
-        window.personajesData = <?php echo json_encode($personajes_array); ?>;
-        // Pasar el ID del usuario actual para los comentarios
-        window.currentUserId = <?php echo $_SESSION['usuario_id']; ?>;
-    </script>
     
-    <!-- JavaScript para los filtros -->
-    <script src="personajes.js"></script>
-    
-    <!-- JavaScript para detalles de personajes -->
-    <script src="detalles-personaje.js"></script>
 </body>
 </html>
