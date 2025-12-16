@@ -1,10 +1,139 @@
-// detalles-personaje.js - VERSIÓN CON DEBUGGING
+/**
+ * Archivo: detalles-personaje.js
+ * Manejo del modal de detalles de personajes con sistema de notificaciones flash
+ * VERSIÓN COMPLETA CON IMÁGENES
+ */
 
-console.log('✅ detalles-personaje.js cargado');
+// ============================================
+// SISTEMA DE NOTIFICACIONES FLASH
+// ============================================
+const FlashNotifications = {
+    container: null,
+    
+    init() {
+        if (!document.querySelector('.mensaje-flotante-container')) {
+            this.container = document.createElement('div');
+            this.container.className = 'mensaje-flotante-container';
+            document.body.appendChild(this.container);
+        } else {
+            this.container = document.querySelector('.mensaje-flotante-container');
+        }
+    },
+    
+    show(type, title, message, duration = 5000) {
+        if (!this.container) this.init();
+        
+        const notification = document.createElement('div');
+        notification.className = `mensaje-flotante ${type}`;
+        
+        const iconMap = {
+            success: '<i class="fas fa-check-circle"></i>',
+            error: '<i class="fas fa-exclamation-circle"></i>',
+            info: '<i class="fas fa-info-circle"></i>',
+            warning: '<i class="fas fa-exclamation-triangle"></i>'
+        };
+        
+        notification.innerHTML = `
+            ${iconMap[type] || '<i class="fas fa-info-circle"></i>'}
+            <div class="notification-content">
+                <strong>${title}</strong>
+                <p>${message}</p>
+            </div>
+            <button class="notification-close">&times;</button>
+        `;
+        
+        this.container.appendChild(notification);
+        
+        const closeBtn = notification.querySelector('.notification-close');
+        closeBtn.addEventListener('click', () => this.hide(notification));
+        
+        if (duration > 0) {
+            setTimeout(() => this.hide(notification), duration);
+        }
+        
+        return notification;
+    },
+    
+    confirm(title, message) {
+        return new Promise((resolve) => {
+            if (!this.container) this.init();
+            
+            const notification = document.createElement('div');
+            notification.className = 'mensaje-flotante confirm';
+            
+            notification.innerHTML = `
+                <i class="fas fa-question-circle"></i>
+                <div class="notification-content">
+                    <strong>${title}</strong>
+                    <p>${message}</p>
+                    <div class="confirm-buttons">
+                        <button class="btn-confirm btn-success">
+                            <i class="fas fa-check"></i> Sí, eliminar
+                        </button>
+                        <button class="btn-cancel btn-danger">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            this.container.appendChild(notification);
+            
+            const confirmBtn = notification.querySelector('.btn-confirm');
+            const cancelBtn = notification.querySelector('.btn-cancel');
+            
+            const cleanup = () => {
+                confirmBtn.removeEventListener('click', onConfirm);
+                cancelBtn.removeEventListener('click', onCancel);
+                this.hide(notification);
+            };
+            
+            const onConfirm = () => {
+                cleanup();
+                resolve(true);
+            };
+            
+            const onCancel = () => {
+                cleanup();
+                resolve(false);
+            };
+            
+            confirmBtn.addEventListener('click', onConfirm);
+            cancelBtn.addEventListener('click', onCancel);
+        });
+    },
+    
+    hide(notification) {
+        notification.style.animation = 'slideOut 0.3s ease-out forwards';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    },
+    
+    success(title, message, duration = 5000) {
+        return this.show('success', title, message, duration);
+    },
+    
+    error(title, message, duration = 7000) {
+        return this.show('error', title, message, duration);
+    },
+    
+    info(title, message, duration = 5000) {
+        return this.show('info', title, message, duration);
+    },
+    
+    warning(title, message, duration = 6000) {
+        return this.show('warning', title, message, duration);
+    }
+};
 
+// ============================================
+// CLASE DETALLES PERSONAJE
+// ============================================
 class DetallesPersonaje {
     constructor() {
-        console.log('🔄 Clase DetallesPersonaje instanciada');
         this.modal = null;
         this.currentPersonajeId = null;
         this.currentPersonajeNombre = null;
@@ -15,16 +144,13 @@ class DetallesPersonaje {
     }
     
     init() {
-        console.log('🔧 Inicializando DetallesPersonaje...');
         this.createModal();
         this.bindEvents();
     }
     
     createModal() {
-        console.log('🛠️ Creando modal...');
-        // Crear estructura del modal si no existe
         if (document.getElementById('detallesModal')) {
-            console.log('ℹ️ Modal ya existe');
+            this.modal = document.getElementById('detallesModal');
             return;
         }
         
@@ -49,119 +175,49 @@ class DetallesPersonaje {
         
         document.body.insertAdjacentHTML('beforeend', modalHTML);
         this.modal = document.getElementById('detallesModal');
-        console.log('✅ Modal creado:', this.modal);
     }
     
     bindEvents() {
-        console.log('🔗 Vinculando eventos...');
-        
-        // Delegación de eventos para las cards de personaje
         document.addEventListener('click', (e) => {
-            console.log('🖱️ Click detectado en:', e.target);
-            
             const characterCard = e.target.closest('.character-card');
-            console.log('🔍 Card encontrada:', characterCard);
             
             if (characterCard && !this.isLoading) {
                 e.preventDefault();
                 e.stopPropagation();
                 
                 const personajeId = characterCard.dataset.id;
-                console.log('🎯 ID del personaje:', personajeId);
                 
                 if (personajeId) {
-                    console.log('🚀 Abriendo modal para personaje ID:', personajeId);
                     this.open(personajeId, characterCard);
-                } else {
-                    console.error('❌ Card no tiene data-id');
                 }
             }
         });
         
-        // Eventos del modal
         this.modal.querySelector('.detalles-modal-overlay').addEventListener('click', () => {
-            console.log('👆 Click en overlay - cerrando modal');
             this.close();
         });
         
         this.modal.querySelector('.detalles-modal-close').addEventListener('click', () => {
-            console.log('❌ Click en botón cerrar - cerrando modal');
             this.close();
         });
         
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.modal.style.display === 'flex') {
-                console.log('ESC presionado - cerrando modal');
                 this.close();
             }
         });
     }
     
     async open(personajeId, characterCard) {
-        console.log('📂 Abriendo modal para personaje:', personajeId);
-        
         this.currentPersonajeId = personajeId;
         this.currentPersonajeNombre = characterCard.querySelector('.character-name').textContent;
-        console.log('📝 Nombre del personaje:', this.currentPersonajeNombre);
         
-        // Mostrar modal inmediatamente con información básica
         this.showBasicInfo(characterCard);
         this.modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-        console.log('🪟 Modal mostrado');
         
-        // Cargar datos detallados
-        console.log('📡 Solicitando datos a la API...');
         await this.loadDetallesReal(personajeId);
     }
-    
-    async loadDetallesReal(personajeId) {
-        if (this.isLoading) {
-            console.log('⏳ Ya está cargando, ignorando...');
-            return;
-        }
-        
-        this.isLoading = true;
-        console.log('🔄 Iniciando carga de detalles...');
-        
-        try {
-            console.log(`🌐 Fetching: detalles-personaje-data.php?id=${personajeId}`);
-            const response = await fetch(`detalles-personaje-data.php?id=${personajeId}`);
-            
-            console.log('📊 Respuesta HTTP:', response.status, response.statusText);
-            
-            if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
-            }
-            
-            const data = await response.json();
-            console.log('📦 Datos recibidos:', data);
-            
-            if (data.error) {
-                throw new Error(data.error);
-            }
-            
-            if (data.success) {
-                console.log('✅ Datos cargados correctamente');
-                this.detallesCompletos = data;
-                this.comentarios = data.comentarios || [];
-                
-                this.renderDetallesCompletos(data);
-            } else {
-                throw new Error('La respuesta no indica éxito');
-            }
-            
-        } catch (error) {
-            console.error('❌ Error cargando detalles:', error);
-            console.error('Stack:', error.stack);
-            this.showError(error.message);
-        } finally {
-            this.isLoading = false;
-            console.log('🏁 Carga finalizada');
-        }
-    }
-    
-    // ... resto del código igual ...
     
     showBasicInfo(characterCard) {
         const nombre = characterCard.querySelector('.character-name').textContent;
@@ -208,7 +264,7 @@ class DetallesPersonaje {
             const response = await fetch(`detalles-personaje-data.php?id=${personajeId}`);
             
             if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status}`);
+                throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
             }
             
             const data = await response.json();
@@ -217,13 +273,15 @@ class DetallesPersonaje {
                 throw new Error(data.error);
             }
             
-            this.detallesCompletos = data;
-            this.comentarios = data.comentarios || [];
-            
-            this.renderDetallesCompletos(data);
+            if (data.success) {
+                this.detallesCompletos = data;
+                this.comentarios = data.comentarios || [];
+                this.renderDetallesCompletos(data);
+            } else {
+                throw new Error('La respuesta no indica éxito');
+            }
             
         } catch (error) {
-            console.error('Error cargando detalles:', error);
             this.showError(error.message);
         } finally {
             this.isLoading = false;
@@ -231,9 +289,35 @@ class DetallesPersonaje {
     }
     
     renderDetallesCompletos(data) {
-        const personaje = data.personaje;
         const detalles = data.detalles;
         const totalComentarios = this.comentarios.length;
+        
+        // Primero, verificar qué datos tenemos
+        console.log("📊 DETALLES DISPONIBLES:", {
+            artefactos: detalles.artefactos,
+            conos_luz: detalles.conos_luz
+        });
+        
+        // Verificar estructura de artefactos
+        if (detalles.artefactos && detalles.artefactos.length > 0) {
+            console.log("🔍 Primer artefacto:", detalles.artefactos[0]);
+            console.log("📷 ¿Tiene imagen?", 'imagen_artefacto' in detalles.artefactos[0]);
+            console.log("📷 URL de imagen:", detalles.artefactos[0]?.imagen_artefacto);
+        }
+        
+        // Verificar estructura de conos
+        if (detalles.conos_luz && detalles.conos_luz.length > 0) {
+            console.log("🔍 Primer cono:", detalles.conos_luz[0]);
+            console.log("📷 ¿Tiene imagen?", 'imagen_url' in detalles.conos_luz[0]);
+            console.log("📷 URL de imagen:", detalles.conos_luz[0]?.imagen_url);
+        }
+        
+        const existingTabs = this.modal.querySelector('.detalles-tabs');
+        
+        if (existingTabs) {
+            this.actualizarPestanaComentarios();
+            return;
+        }
         
         const tabsHTML = `
             <div class="detalles-tabs">
@@ -302,7 +386,13 @@ class DetallesPersonaje {
         `;
         
         const contentDiv = this.modal.querySelector('.detalles-content');
-        contentDiv.insertAdjacentHTML('beforeend', tabsHTML);
+        
+        const basicInfo = contentDiv.querySelector('.detalles-basic-info');
+        if (basicInfo) {
+            basicInfo.insertAdjacentHTML('afterend', tabsHTML);
+        } else {
+            contentDiv.innerHTML = tabsHTML;
+        }
         
         this.modal.querySelector('.detalles-loading').style.display = 'none';
         contentDiv.style.display = 'block';
@@ -387,69 +477,161 @@ class DetallesPersonaje {
     }
     
     renderArtefactos(artefactos) {
+        console.log("🖼️ MÉTODO renderArtefactos EJECUTADO");
+        console.log("🖼️ Datos de artefactos:", artefactos);
+        
         if (!artefactos || artefactos.length === 0) {
+            console.log("🖼️ No hay artefactos");
             return '<div class="no-data"><p>No hay artefactos recomendados disponibles.</p></div>';
         }
+        
+        // Verificar cada artefacto
+        artefactos.forEach((art, i) => {
+            console.log(`🖼️ Artefacto ${i}:`, {
+                nombre: art.nombre,
+                tieneImagenArt: 'imagen_artefacto' in art,
+                imagen_artefacto: art.imagen_artefacto,
+                propiedades: Object.keys(art)
+            });
+        });
         
         return `
             <h3>Artefactos Recomendados</h3>
             <div class="artefactos-list">
-                ${artefactos.map(artefacto => `
+                ${artefactos.map(artefacto => {
+                    console.log("🖼️ Procesando artefacto en template:", artefacto.nombre);
+                    console.log("🖼️ URL de imagen:", artefacto.imagen_artefacto);
+                    
+                    return `
                     <div class="artefacto-card ${artefacto.prioridad ? artefacto.prioridad.toLowerCase() : ''}">
                         <div class="artefacto-header">
-                            <span class="artefacto-nombre">${this.escapeHtml(artefacto.nombre)}</span>
+                            <div class="artefacto-title-section">
+                                ${artefacto.imagen_artefacto ? `
+                                    <div class="artefacto-image">
+                                        <img src="${artefacto.imagen_artefacto}" 
+                                             alt="${this.escapeHtml(artefacto.nombre)}"
+                                             onerror="console.log('❌ Error cargando imagen:', this.src); this.src='https://via.placeholder.com/80x80/1a1a2e/667eea?text=Art'"
+                                             class="artefacto-img">
+                                    </div>
+                                ` : `
+                                    <div class="artefacto-image">
+                                        <img src="https://via.placeholder.com/80x80/1a1a2e/667eea?text=Art" 
+                                             alt="${this.escapeHtml(artefacto.nombre)}"
+                                             class="artefacto-img">
+                                    </div>
+                                `}
+                                <div class="artefacto-titles">
+                                    <span class="artefacto-nombre">${this.escapeHtml(artefacto.nombre)}</span>
+                                    <div class="artefacto-info">
+                                        <span class="artefacto-tipo">${artefacto.tipo}</span>
+                                        ${artefacto.conjunto ? `
+                                            <span class="artefacto-conjunto">${artefacto.conjunto}</span>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
                             ${artefacto.prioridad ? `
                                 <span class="artefacto-prioridad ${artefacto.prioridad.toLowerCase()}">
                                     ${artefacto.prioridad}
                                 </span>
                             ` : ''}
                         </div>
-                        <div class="artefacto-info">
-                            <span class="artefacto-tipo">${artefacto.tipo}</span>
-                            ${artefacto.conjunto ? `
-                                <span class="artefacto-conjunto">${artefacto.conjunto}</span>
-                            ` : ''}
-                        </div>
+                        
                         ${artefacto.estadistica_principal ? `
                             <div class="artefacto-stats">
-                                <strong>Principal:</strong> ${artefacto.estadistica_principal}
+                                <strong><i class="fas fa-chart-line"></i> Principal:</strong> ${artefacto.estadistica_principal}
                             </div>
                         ` : ''}
+                        
                         ${artefacto.estadisticas_secundarias ? `
                             <div class="artefacto-stats">
-                                <strong>Secundarias:</strong> ${artefacto.estadisticas_secundarias}
+                                <strong><i class="fas fa-chart-bar"></i> Secundarias:</strong> ${artefacto.estadisticas_secundarias}
                             </div>
                         ` : ''}
+                        
+                        ${artefacto.descripcion ? `
+                            <div class="artefacto-personal-desc">${this.escapeHtml(artefacto.descripcion)}</div>
+                        ` : ''}
                     </div>
-                `).join('')}
+                    `;
+                }).join('')}
             </div>
         `;
     }
     
     renderConosLuz(conos) {
+        console.log("🔦 MÉTODO renderConosLuz EJECUTADO");
+        console.log("🔦 Datos de conos:", conos);
+        
         if (!conos || conos.length === 0) {
+            console.log("🔦 No hay conos");
             return '<div class="no-data"><p>No hay conos de luz recomendados disponibles.</p></div>';
         }
+        
+        // Verificar cada cono
+        conos.forEach((cono, i) => {
+            console.log(`🔦 Cono ${i}:`, {
+                nombre: cono.nombre,
+                tieneImagenUrl: 'imagen_url' in cono,
+                imagen_url: cono.imagen_url,
+                tieneImagenCono: 'imagen_cono' in cono,
+                imagen_cono: cono.imagen_cono,
+                propiedades: Object.keys(cono)
+            });
+        });
         
         return `
             <h3>Conos de Luz Recomendados</h3>
             <div class="conos-grid">
-                ${conos.map(cono => `
+                ${conos.map(cono => {
+                    console.log("🔦 Procesando cono en template:", cono.nombre);
+                    
+                    // Intentar obtener la imagen de varias propiedades posibles
+                    const imagenUrl = cono.imagen_url || cono.imagen_cono || null;
+                    console.log("🔦 URL de imagen final:", imagenUrl);
+                    
+                    return `
                     <div class="cono-card ${cono.prioridad ? cono.prioridad.toLowerCase() : ''}">
                         <div class="cono-header">
-                            <span class="cono-nombre">${this.escapeHtml(cono.nombre)}</span>
-                            <span class="cono-rareza ${this.getRarezaClass(cono.rareza)}">
-                                ${cono.rareza}
-                            </span>
+                            ${imagenUrl ? `
+                                <div class="cono-image">
+                                    <img src="${imagenUrl}" 
+                                         alt="${this.escapeHtml(cono.nombre)}"
+                                         onerror="console.log('❌ Error cargando imagen de cono:', this.src); this.src='https://via.placeholder.com/80x80/1a1a2e/667eea?text=Cono'"
+                                         class="cono-img">
+                                </div>
+                            ` : `
+                                <div class="cono-image">
+                                    <img src="https://via.placeholder.com/80x80/1a1a2e/667eea?text=Cono" 
+                                         alt="${this.escapeHtml(cono.nombre)}"
+                                         class="cono-img">
+                                </div>
+                            `}
+                            <div class="cono-info">
+                                <div class="cono-title-section">
+                                    <span class="cono-nombre">${this.escapeHtml(cono.nombre)}</span>
+                                   
+                                </div>
+                            </div>
                         </div>
+                        
                         <div class="cono-desc">${this.escapeHtml(cono.descripcion)}</div>
+                        
                         ${cono.razon ? `
                             <div class="cono-razon">
-                                <strong>Razón:</strong> ${this.escapeHtml(cono.razon)}
+                                <strong><i class="fas fa-lightbulb"></i> Razón:</strong> ${this.escapeHtml(cono.razon)}
+                            </div>
+                        ` : ''}
+                        
+                        ${cono.prioridad ? `
+                            <div class="cono-prioridad ${cono.prioridad.toLowerCase()}">
+                                <i class="fas fa-${cono.prioridad === 'Óptimo' ? 'crown' : cono.prioridad === 'Alternativa' ? 'check' : 'clock'}"></i>
+                                ${cono.prioridad}
                             </div>
                         ` : ''}
                     </div>
-                `).join('')}
+                    `;
+                }).join('')}
             </div>
         `;
     }
@@ -561,7 +743,6 @@ class DetallesPersonaje {
     }
     
     renderFormularioComentario() {
-        // Solo mostrar formulario si el usuario está logueado
         if (!window.currentUserId) {
             return `
                 <div class="login-required">
@@ -611,7 +792,10 @@ class DetallesPersonaje {
         `;
     }
     
-    // Métodos auxiliares
+    // ============================================
+    // MÉTODOS AUXILIARES
+    // ============================================
+    
     getRarezaClass(rareza) {
         if (rareza.includes('5')) return 'cinco-estrellas';
         if (rareza.includes('4')) return 'cuatro-estrellas';
@@ -681,7 +865,6 @@ class DetallesPersonaje {
                 enviarBtn.addEventListener('click', () => this.agregarComentario());
             }
             
-            // También enviar con Ctrl+Enter
             textarea.addEventListener('keydown', (e) => {
                 if (e.ctrlKey && e.key === 'Enter') {
                     this.agregarComentario();
@@ -690,9 +873,15 @@ class DetallesPersonaje {
         }
         
         this.modal.querySelectorAll('.btn-eliminar-comentario').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+            btn.addEventListener('click', async (e) => {
                 const id = e.target.closest('.btn-eliminar-comentario').dataset.id;
-                if (confirm('¿Eliminar este comentario?')) {
+                
+                const confirmacion = await FlashNotifications.confirm(
+                    'Eliminar comentario',
+                    '¿Estás seguro de que quieres eliminar este comentario? Esta acción no se puede deshacer.'
+                );
+                
+                if (confirmacion) {
                     this.eliminarComentario(id);
                 }
             });
@@ -704,12 +893,18 @@ class DetallesPersonaje {
         const contenido = textarea.value.trim();
         
         if (!contenido) {
-            alert('El comentario no puede estar vacío');
+            FlashNotifications.warning(
+                'Comentario vacío',
+                'El comentario no puede estar vacío'
+            );
             return;
         }
         
         if (!window.currentUserId) {
-            alert('Debes iniciar sesión para comentar');
+            FlashNotifications.error(
+                'Sesión requerida',
+                'Debes iniciar sesión para comentar'
+            );
             return;
         }
         
@@ -726,29 +921,58 @@ class DetallesPersonaje {
             const result = await response.json();
             
             if (result.success) {
-                // Recargar comentarios
-                await this.loadDetallesReal(this.currentPersonajeId);
+                await this.actualizarPestanaComentarios();
                 
-                // Limpiar textarea
                 textarea.value = '';
                 if (this.modal.querySelector('#charCount')) {
                     this.modal.querySelector('#charCount').textContent = '0/500';
                 }
                 
-                this.mostrarMensaje('Comentario publicado correctamente', 'success');
+                FlashNotifications.success(
+                    'Comentario publicado',
+                    'Tu comentario se ha publicado correctamente'
+                );
+                
             } else {
-                alert(result.error || 'Error al publicar comentario');
+                FlashNotifications.error(
+                    'Error al publicar',
+                    result.error || 'Error al publicar comentario'
+                );
             }
             
         } catch (error) {
-            console.error('Error:', error);
-            alert('Error al publicar el comentario');
+            FlashNotifications.error(
+                'Error de conexión',
+                'No se pudo publicar el comentario. Intenta nuevamente.'
+            );
+        }
+    }
+    
+    async actualizarPestanaComentarios() {
+        try {
+            const response = await fetch(`detalles-personaje-data.php?id=${this.currentPersonajeId}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.comentarios = data.comentarios || [];
+                
+                const comentariosTab = this.modal.querySelector('#comentarios');
+                if (comentariosTab) {
+                    comentariosTab.innerHTML = this.renderComentarios();
+                    this.initComentarios();
+                    
+                    const commentsCount = this.modal.querySelector('.comments-count');
+                    if (commentsCount) {
+                        commentsCount.textContent = this.comentarios.length;
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error actualizando comentarios:', error);
         }
     }
     
     async eliminarComentario(id) {
-        if (!confirm('¿Eliminar este comentario?')) return;
-        
         try {
             const formData = new FormData();
             formData.append('comentario_id', id);
@@ -761,16 +985,24 @@ class DetallesPersonaje {
             const result = await response.json();
             
             if (result.success) {
-                // Recargar comentarios
-                await this.loadDetallesReal(this.currentPersonajeId);
-                this.mostrarMensaje('Comentario eliminado', 'success');
+                await this.actualizarPestanaComentarios();
+                
+                FlashNotifications.success(
+                    'Comentario eliminado',
+                    'El comentario se ha eliminado correctamente'
+                );
             } else {
-                alert(result.error || 'Error al eliminar comentario');
+                FlashNotifications.error(
+                    'Error al eliminar',
+                    result.error || 'Error al eliminar comentario'
+                );
             }
             
         } catch (error) {
-            console.error('Error:', error);
-            alert('Error al eliminar el comentario');
+            FlashNotifications.error(
+                'Error de conexión',
+                'No se pudo eliminar el comentario. Intenta nuevamente.'
+            );
         }
     }
     
@@ -788,34 +1020,25 @@ class DetallesPersonaje {
         this.modal.querySelector('.detalles-loading').style.display = 'none';
         contentDiv.style.display = 'block';
         
+        FlashNotifications.error(
+            'Error de carga',
+            'No se pudieron cargar los detalles del personaje'
+        );
+        
         contentDiv.querySelector('.btn-retry').addEventListener('click', () => {
             this.loadDetallesReal(this.currentPersonajeId);
         });
     }
     
-    mostrarMensaje(texto, tipo = 'info') {
-        const mensaje = document.createElement('div');
-        mensaje.className = `mensaje-flotante ${tipo}`;
-        mensaje.innerHTML = `
-            <i class="fas fa-${tipo === 'success' ? 'check-circle' : 'info-circle'}"></i>
-            <span>${texto}</span>
-        `;
-        
-        document.body.appendChild(mensaje);
-        
-        setTimeout(() => {
-            mensaje.style.opacity = '0';
-            setTimeout(() => mensaje.remove(), 300);
-        }, 3000);
-    }
-    
     close() {
         this.modal.style.display = 'none';
         document.body.style.overflow = 'auto';
+        
         const contentDiv = this.modal.querySelector('.detalles-content');
         contentDiv.innerHTML = '';
         contentDiv.style.display = 'none';
         this.modal.querySelector('.detalles-loading').style.display = 'flex';
+        
         this.comentarios = [];
         this.detallesCompletos = null;
         this.currentPersonajeId = null;
@@ -823,10 +1046,16 @@ class DetallesPersonaje {
     }
 }
 
-// Inicializar cuando el DOM esté listo
+// ============================================
+// INICIALIZACIÓN
+// ============================================
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Verificar si estamos en la página de personajes
+    FlashNotifications.init();
+    
     if (document.querySelector('.character-card')) {
+        console.log('✅ Inicializando DetallesPersonaje...');
         window.detallesPersonaje = new DetallesPersonaje();
+        console.log('✅ DetallesPersonaje listo');
     }
 });

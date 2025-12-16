@@ -30,7 +30,7 @@ if (isset($_SESSION['usuario_id'])) {
         <div class="left-text">Hacia las estrellas</div>
 
         <img
-            src="astral-express-honkai-star-rail.gif"
+            src="./honkai-star-rail-logo.png"
             alt="Logo principal"
             class="center-image"
         />

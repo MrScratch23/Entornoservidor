@@ -13,11 +13,11 @@ class DetallePersonajeModel {
         $detalles = [
             'habilidades' => $this->obtenerHabilidades($id_personaje),
             'estadisticas' => $this->obtenerEstadisticas($id_personaje),
-            'artefactos' => $this->obtenerArtefactos($id_personaje),
+            'artefactos' => $this->obtenerArtefactosConImagenes($id_personaje),  // CAMBIADO
             'sinergias' => $this->obtenerSinergias($id_personaje),
             'reviews' => $this->obtenerReviews($id_personaje),
             'trazas' => $this->obtenerTrazas($id_personaje),
-            'conos_luz' => $this->obtenerConosLuz($id_personaje)
+            'conos_luz' => $this->obtenerConosLuzConImagenes($id_personaje)    // CAMBIADO
         ];
         
         return $detalles;
@@ -42,23 +42,35 @@ class DetallePersonajeModel {
         return $resultado[0] ?? null;
     }
     
-    public function obtenerArtefactos($id_personaje) {
-        $sql = "SELECT * FROM artefactos_recomendados WHERE id_personaje = ? ORDER BY 
-                CASE prioridad 
-                    WHEN 'Alta' THEN 1
-                    WHEN 'Media' THEN 2
-                    WHEN 'Baja' THEN 3
-                    ELSE 4
-                END,
-                CASE tipo
-                    WHEN 'Cuerpo' THEN 1
-                    WHEN 'Pies' THEN 2
-                    WHEN 'Planar' THEN 3
-                    WHEN 'Manos' THEN 4
-                    WHEN 'Cabeza' THEN 5
-                    ELSE 6
-                END";
+    // MÉTODO NUEVO: Artefactos con imágenes
+    public function obtenerArtefactosConImagenes($id_personaje) {
+        $sql = "SELECT 
+                    ar.*, 
+                    a.imagen_url as imagen_artefacto
+                FROM artefactos_recomendados ar 
+                LEFT JOIN artefactos a ON ar.id_artefacto_maestro = a.id_artefacto 
+                WHERE ar.id_personaje = ? 
+                ORDER BY 
+                    CASE ar.prioridad 
+                        WHEN 'Alta' THEN 1
+                        WHEN 'Media' THEN 2
+                        WHEN 'Baja' THEN 3
+                        ELSE 4
+                    END,
+                    CASE ar.tipo
+                        WHEN 'Cuerpo' THEN 1
+                        WHEN 'Pies' THEN 2
+                        WHEN 'Planar' THEN 3
+                        WHEN 'Manos' THEN 4
+                        WHEN 'Cabeza' THEN 5
+                        ELSE 6
+                    END";
         return $this->db->executeQuery($sql, [$id_personaje]);
+    }
+    
+    // MÉTODO ANTIGUO (mantener para compatibilidad)
+    public function obtenerArtefactos($id_personaje) {
+        return $this->obtenerArtefactosConImagenes($id_personaje);
     }
     
     public function obtenerSinergias($id_personaje) {
@@ -89,21 +101,33 @@ class DetallePersonajeModel {
         return $this->db->executeQuery($sql, [$id_personaje]);
     }
     
-    public function obtenerConosLuz($id_personaje) {
-        $sql = "SELECT * FROM conos_luz_recomendados WHERE id_personaje = ? ORDER BY 
-                CASE prioridad
-                    WHEN 'Óptimo' THEN 1
-                    WHEN 'Alternativa' THEN 2
-                    WHEN 'Temporal' THEN 3
-                    ELSE 4
-                END,
-                CASE rareza
-                    WHEN '5 estrellas' THEN 1
-                    WHEN '4 estrellas' THEN 2
-                    WHEN '3 estrellas' THEN 3
-                    ELSE 4
-                END";
+    // MÉTODO NUEVO: Conos de luz con imágenes
+    public function obtenerConosLuzConImagenes($id_personaje) {
+        $sql = "SELECT 
+                    clr.*, 
+                    cl.imagen_url as imagen_cono
+                FROM conos_luz_recomendados clr 
+                LEFT JOIN conos_luz cl ON clr.id_cono_maestro = cl.id_cono 
+                WHERE clr.id_personaje = ? 
+                ORDER BY 
+                    CASE clr.prioridad
+                        WHEN 'Óptimo' THEN 1
+                        WHEN 'Alternativa' THEN 2
+                        WHEN 'Temporal' THEN 3
+                        ELSE 4
+                    END,
+                    CASE clr.rareza
+                        WHEN '5 estrellas' THEN 1
+                        WHEN '4 estrellas' THEN 2
+                        WHEN '3 estrellas' THEN 3
+                        ELSE 4
+                    END";
         return $this->db->executeQuery($sql, [$id_personaje]);
+    }
+    
+    // MÉTODO ANTIGUO (mantener para compatibilidad)
+    public function obtenerConosLuz($id_personaje) {
+        return $this->obtenerConosLuzConImagenes($id_personaje);
     }
 }
 ?>

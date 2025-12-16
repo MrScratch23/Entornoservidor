@@ -41,89 +41,9 @@ if (isset($_SESSION['mensajeExito'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Honkai Star Rail</title>
     <link rel="stylesheet" href="paginaprincipal.css">
+    <link rel="stylesheet" href="login.css">
     <style>
-        .login-container {
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 30px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            border: 1px solid #667eea;
-        }
-        
-        .login-container h1 {
-            text-align: center;
-            color: #667eea;
-            margin-bottom: 30px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #aaa;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #667eea;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 1rem;
-        }
-        
-        .btn-login {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        
-        .btn-login:hover {
-            transform: translateY(-2px);
-        }
-        
-        .error-message {
-            background: rgba(255, 0, 0, 0.1);
-            color: #ff6b6b;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-            border: 1px solid #ff6b6b;
-        }
-        
-        .success-message {
-            background: rgba(0, 255, 0, 0.1);
-            color: #4CAF50;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-            border: 1px solid #4CAF50;
-        }
-        
-        .register-link {
-            text-align: center;
-            margin-top: 20px;
-            color: #aaa;
-        }
-        
-        .register-link a {
-            color: #667eea;
-            text-decoration: none;
-        }
+      
     </style>
 </head>
 <body class="personajes-page">
