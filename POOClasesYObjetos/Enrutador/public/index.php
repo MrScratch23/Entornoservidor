@@ -22,6 +22,7 @@ echo "metodo: " . $_SERVER['REQUEST_METHOD']. "<br>";
 echo "uri: " . $_SERVER['REQUEST_URI'] . "<br>";
 */
 // registramos todas las rutas posibles
+
 echo Route::get("/", function () {
     echo "BUENOS DIAS VIETNAM";
 });
