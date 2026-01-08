@@ -12,6 +12,7 @@ spl_autoload_register(function ($clase) {
     else die("Error: No se pudo cargar la clase $clase en la ruta $ruta");
 });
 
+use Enrutador\app\controllers\HomeController;
 use Enrutador\lib\Route;
 
 
@@ -31,9 +32,10 @@ echo Route::get("/pepe", function () {
     echo "BUENOS DIAS VIETNAM2";
 });
 // llamamos al metodo manejador de rutas
+
+
+Route::get("/inicio", [HomeController::class, 'index']);
 Route::handleRoute();
-
-
 
 // echo Route::class;
 
