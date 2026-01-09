@@ -1,0 +1,19 @@
+{
+    "name": "daw2/nuevo-mvc",
+    "description": "ejemplo de enrutador",
+    "autoload": {
+        "psr-4": {
+          
+            "RubenMolina\\App\\": "app/",
+            "RubenMolina\\Lib\\": "lib/"
+            
+        }
+    },
+    "authors": [
+        {
+            "name": "Ruben",
+            "email": "r.ternero.molina@iescristobaldemonroy.es"
+        }
+    ],
+    "require": {}
+}

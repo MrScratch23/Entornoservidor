@@ -1,11 +1,18 @@
 <?php
 
-namespace enrutador\app\controllers;
+namespace RubenMolina\App\controllers;
+use RubenMolina\App\controllers\Controller;
+
     
-    class HomeController{
+    class HomeController extends Controller{
         //método estático
         static public function index(){
-            echo "hola desde la página de home";
+            // echo "hola desde la página de home";
+            $nombre = "Ruben";
+            $apellidos = "Ternero Molina";
+            // require_once "../app/views/index_view.php";
+
+            self::mostrarVista("index_view", ['nombre'=>$nombre, 'apellidos'=>$apellidos]);
         }
         static public function show($id){
              echo "Mostramos el elemento número $id";

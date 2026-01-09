@@ -1,9 +1,12 @@
 <?php
 
-use enrutador\app\controllers\HomeController;
-use enrutador\lib\Route;
+
+ 
 
 //registramos todas las rutas posibles
+
+use RubenMolina\App\controllers\HomeController;
+use RubenMolina\Lib\Route;
 
 Route::get("/pepe", function () {
     echo "hola PEPE";
@@ -20,9 +23,12 @@ Route::get('/usuario/123', function () {
     echo "Usuario ID: 123";
 });
 
-Route::get('/', function() {
-    echo "Página principal";
-});
+//Route::get('/', function() {
+//    echo "Página principal";
+// });
+
+Route::get('/', [HomeController::class, 'index']);
+
 
 Route::get('/usuario/{id}', function($id) {
     echo "Usuario ID: $id"; // Ejemplo: /usuario/123
@@ -34,6 +40,8 @@ Route::get('/producto/{categoria}/{id}', function($categoria, $id) {
 
 Route::get('/perfil/{nombre}', [HomeController::class, 'perfil']); // Con controlador
 Route::get('/articulo/{id}/{slug}', [HomeController::class, 'articulo']); // Dos params
+
+// Route::get('/personal', [Controller::class]);
 
 
 Route::handleRoute()

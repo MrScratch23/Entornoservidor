@@ -1,6 +1,6 @@
 <?php
 
-namespace enrutador\lib;
+namespace RubenMolina\Lib;
 
 class Route
 {
