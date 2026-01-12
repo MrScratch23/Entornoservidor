@@ -1,5 +1,6 @@
 <?php
 
+
 namespace RubenMolina\Lib;
 
 define('BD_HOST', 'localhost');

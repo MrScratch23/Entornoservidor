@@ -4,7 +4,10 @@
 namespace RubenMolina\Lib;
 
 use mysqli;
-use RubenMolina\Lib\db_credentials;
+
+require_once "db_credentials.php";
+
+
 
 class Database {
 

@@ -12,7 +12,7 @@ class PersonalController extends Controller {
            $pm = new PersonalModel();
            $datos = $pm->obtenerTodos();
            
-            self::mostrarTabla("index_view", [$datos]);
+            self::mostrarTabla("index_view", ['datos' => $datos]);
         }
 
 

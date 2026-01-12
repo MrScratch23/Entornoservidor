@@ -6,6 +6,7 @@
 //registramos todas las rutas posibles
 
 use RubenMolina\App\controllers\HomeController;
+use RubenMolina\App\controllers\PersonalController;
 use RubenMolina\Lib\Route;
 
 Route::get("/pepe", function () {
@@ -41,7 +42,7 @@ Route::get('/producto/{categoria}/{id}', function($categoria, $id) {
 Route::get('/perfil/{nombre}', [HomeController::class, 'perfil']); // Con controlador
 Route::get('/articulo/{id}/{slug}', [HomeController::class, 'articulo']); // Dos params
 
-// Route::get('/personal', [Controller::class]);
+Route::get('/personal', [PersonalController::class,'index']);
 
 
 Route::handleRoute()
