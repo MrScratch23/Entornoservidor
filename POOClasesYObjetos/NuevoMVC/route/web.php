@@ -28,7 +28,9 @@ Route::get('/usuario/123', function () {
 //    echo "Página principal";
 // });
 
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', function() {
+    echo "Pagina principal";
+});
 
 
 Route::get('/usuario/{id}', function($id) {

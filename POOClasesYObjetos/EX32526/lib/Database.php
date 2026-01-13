@@ -1,7 +1,7 @@
 <?php
 
 
-namespace RubenMolina\Lib;
+namespace RubenMolinaExamen\Lib;
 
 use mysqli;
 

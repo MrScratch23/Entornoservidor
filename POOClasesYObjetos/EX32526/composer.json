@@ -1,0 +1,18 @@
+{
+    "name": "daw2/ex32526",
+    "autoload": {
+        "psr-4": {
+            
+            "RubenMolinaExamen\\App\\": "app/",
+            "RubenMolinaExamen\\Lib\\": "lib/"
+
+        }
+    },
+    "authors": [
+        {
+            "name": "Ruben",
+            "email": "r.ternero.molina@iescristobaldemonroy.es"
+        }
+    ],
+    "require": {}
+}
