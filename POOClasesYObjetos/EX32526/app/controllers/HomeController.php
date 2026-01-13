@@ -14,6 +14,10 @@ class HomeController extends Controller {
 
        
     }
+
+    public static function alta () {
+        self::mostrarVista('alta_view');
+    }
 }
 
 ?>

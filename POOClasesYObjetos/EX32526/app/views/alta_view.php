@@ -1,3 +1,9 @@
+<?php
+require_once __DIR__ . '/layout/header.php';
+
+?>
+
+
 <!-- CONTENIDO PRINCIPAL-->
     <main class="main-content">
         <div class="container">
@@ -53,3 +59,6 @@
             </div>
         </div>
     </main>
+    <?php
+require_once __DIR__ . '/layout/footer.php';
+?>

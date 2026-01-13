@@ -1,5 +1,15 @@
 
 
+<?php
+
+require_once __DIR__ . '/layout/header.php';
+
+
+
+
+?>
+
+
 <body>
     <!-- Capa principal de login -->
     <div class="login-card">
@@ -47,3 +57,6 @@
 </body>
 
 </html>
+<?php
+require_once __DIR__ . '/layout/footer.php';
+?>

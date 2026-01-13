@@ -1,3 +1,8 @@
+<?php
+
+
+?>
+ 
  <!-- PIE DE PÁGINA -->
     <footer class="footer">
         <div class="container">
