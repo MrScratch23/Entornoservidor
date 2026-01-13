@@ -1,7 +1,9 @@
 <?php
-require_once "Database.php";
 
-class TicketModel {
+namespace RubenMolinaExamen\App\models;
+use RubenMolinaExamen\Lib\Database;
+
+class IncidenciaModel {
 private $db;
 
 public function __construct() {
@@ -60,11 +62,20 @@ public function cambiarEstado($id, $estado) {
     return $this->db->executeUpdate($sql, [$comando, $id]);
 }
 
+// obtener media de horas estimadas
+public function obtenerMediaHoras() {
+    $sql = "SELECT AVG(horas_estimadas) AS media_horas FROM incidencias";
+    $resultado = $this->db->executeQuery($sql);
 
+    if (empty($resultado)) {
+        return false;
+    }
+
+    return $resultado[0]['media_horas'];
 }
 
 
-
+}
 
 
 ?>

@@ -1,9 +1,17 @@
 <?php
+
+
+//$modelo = new IncidenciaModel();
+
+// $tickets = $modelo->obtenerTodos();
+
 require_once __DIR__ . '/layout/header.php';
-require_once __DIR__ . '/models/IncidenciaModel.php';
 
-$lm = new IncidenciaModel();
+use RubenMolinaExamen\App\models\IncidenciaModel;
 
+$model = new IncidenciaModel();
+$tickets = $model->obtenerTodos();
+$mediaHoras = $model->obtenerMediaHoras();
 
 
 ?>
@@ -17,7 +25,7 @@ $lm = new IncidenciaModel();
                     <span class="stat-icon">📝</span>
                     <div>
                         <p class="stat-label">Total Tickets</p>
-                        <p class="stat-value"><?php echo $n_tickets ?></p>
+                        <p class="stat-value"><?php echo count($tickets) ?></p>
                     </div>
                 </div>
                 <div class="card stat-card average">
@@ -49,7 +57,7 @@ $lm = new IncidenciaModel();
                         ?>
                 </div>
                 <?php endif; ?>
-                <?php if ($n_tickets === 0):?>
+                <?php if (count($tickets) === 0):?>
                 <div class="flash-message error">No hay incidencias registradas actualmente</div> 
                  <?php endif; ?>
             </div>
