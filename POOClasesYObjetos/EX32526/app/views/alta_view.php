@@ -3,21 +3,22 @@ require_once __DIR__ . '/layout/header.php';
 
 ?>
 
-
-<!-- CONTENIDO PRINCIPAL-->
+   <!-- CONTENIDO PRINCIPAL-->
     <main class="main-content">
         <div class="container">
             <h1 class="title">Alta de Nueva Incidencia</h1>
             <section class="card">
                 <!-- FORMULARIO DE ALTA-->
-                <form action="index.php" method="POST">
+                <form action="alta.php" method="POST">
                     <h2 class="table-title form-section-title">Detalles del incidencia</h2>
                     <!-- Campo asunto -->
                     <div class="form-group">
                         <label for="asunto">Asunto (incidencia)</label>
                         <input type="text" id="asunto" name="asunto" placeholder="Ej: Error PC01" value="">
                         <!-- Placeholder para mensaje de error -->
-                        <span class="validation-error" id="error-asunto">Ejemplo de mensaje</span>
+                         <?php if (isset($errores['asunto'])): ?>
+                            <span class="validation-error" id="error-asunto"><?php echo $errores['asunto']; ?></span>
+                         <?php endif; ?>               
                     </div>
                     <!-- Campo Tipo de incidencia -->
                     <div class="form-group">
@@ -30,7 +31,9 @@ require_once __DIR__ . '/layout/header.php';
                             <option value="Otros">Otros</option>
                         </select>
                         <!-- Placeholder para mensaje de error -->
-                        <span class="validation-error" id="error-tipo-incidencia">Ejemplo de mensaje</span>
+                          <?php if (isset($errores['tipo_incidencia'])): ?>
+                            <span class="validation-error" id="error-tipo-incidencia"><?php echo $errores['tipo_incidencia']; ?></span>
+                         <?php endif; ?>   
                     </div>
                     <!-- Campo  Horas estimadas -->
                     <div class="form-row">
@@ -38,7 +41,9 @@ require_once __DIR__ . '/layout/header.php';
                             <label for="horas_estimadas">Horas estimadas</label>
                             <input type="number" id="horas_estimadas" name="horas_estimadas" placeholder="Ej: 2" value="">
                             <!-- Placeholder para mensaje de error -->
-                            <span class="validation-error" id="error-horas">Ejemplo de mensaje</span>
+                             <?php if (isset($errores['horas_estimadas'])): ?>
+                                 <span class="validation-error" id="error-horas"><?php echo $errores['horas_estimadas']; ?></span>
+                             <?php endif; ?>
                         </div>
                     </div>
                     <!-- Botones de Acción -->
@@ -46,7 +51,7 @@ require_once __DIR__ . '/layout/header.php';
                         <button type="submit" class="btn btn-save">
                             Guardar incidencia
                         </button>
-                        <a href="#" class="btn btn-secondary btn-cancel">
+                        <a href="index.php" class="btn btn-secondary btn-cancel">
                             Cancelar
                         </a>
                     </div>
@@ -54,11 +59,16 @@ require_once __DIR__ . '/layout/header.php';
             </section>
             <!-- Mensaje para errores o éxito -->
             <div id="flash-message-container">
-                <div class="flash-message error">Ejemplo de mensaje de error</div>
+                <?php if (!empty($mensajeError)) : ?>
+                <div class="flash-message error"><?php echo $mensajeError ?></div>
                 <!-- <div class="flash-message success">Ejemplo de mensaje de éxito</div> -->
+                 <?php endif; ?>
             </div>
         </div>
     </main>
+
+
+
     <?php
 require_once __DIR__ . '/layout/footer.php';
 ?>

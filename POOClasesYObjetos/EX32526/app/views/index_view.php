@@ -8,11 +8,6 @@
 require_once __DIR__ . '/layout/header.php';
 
 
-use RubenMolinaExamen\App\models\IncidenciaModel;
-
-$model = new IncidenciaModel();
-$tickets = $model->obtenerTodos();
-$mediaHoras = $model->obtenerMediaHoras();
 
 
 ?>

@@ -1,6 +1,7 @@
 <?php
 
 namespace RubenMolinaExamen\App\controllers;
+use RubenMolinaExamen\App\models\IncidenciaModel;
 
 class HomeController extends Controller {
 
@@ -8,12 +9,18 @@ class HomeController extends Controller {
         self::mostrarVista('login_view');
     }
 
-    public static function index () {
-     
-        self::mostrarVista('index_view');
+public static function index () {
+ 
+    $model = new IncidenciaModel();
+    $tickets = $model->obtenerTodos();
+    $mediaHoras = $model->obtenerMediaHoras();
 
-       
-    }
+    $datos = ['tickets' => $tickets, 'mediaHoras' => $mediaHoras];
+
+    self::mostrarVista('index_view', $datos);
+
+   
+}
 
     public static function alta () {
         self::mostrarVista('alta_view');

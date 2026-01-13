@@ -4,8 +4,7 @@
 
 require_once __DIR__ . '/layout/header.php';
 
-
-
+var_dump($usuario);
 
 ?>
 
@@ -24,7 +23,7 @@ require_once __DIR__ . '/layout/header.php';
         </header>
 
         <!-- Formulario de acceso -->
-        <form action="index.php" method="POST">
+        <form action="" method="POST">
             <div class="form-group">
                 <label for="usuario">Usuario</label>
                 <input type="text" id="usuario" name="usuario" value="">
