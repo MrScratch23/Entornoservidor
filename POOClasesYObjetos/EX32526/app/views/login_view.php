@@ -1,18 +1,9 @@
-
-
 <?php
-
 require_once __DIR__ . '/layout/header.php';
-
-var_dump($usuario);
-
 ?>
 
-
 <body>
-    <!-- Capa principal de login -->
     <div class="login-card">
-        <!-- Cabecera con logo y título -->
         <header>
             <div class="logo">
                 <span class="logo-icon">⚙️</span> Incidencias
@@ -22,33 +13,36 @@ var_dump($usuario);
             </p>
         </header>
 
-        <!-- Formulario de acceso -->
-        <form action="" method="POST">
+        <!-- FORMULARIO CORREGIDO -->
+        <form action="login" method="POST">
             <div class="form-group">
                 <label for="usuario">Usuario</label>
-                <input type="text" id="usuario" name="usuario" value="">
-                <!-- Mensaje de error para usuario -->
-                <span class="validation-error" id="error-destino">Ejemplo de mensaje</span>
+                <input type="text" id="usuario" name="usuario" value="<?php echo $_POST['usuario'] ?? ''; ?>">
+                <?php if (isset($errores['usuario'])): ?>
+                    <br><span class="validation-error"><?php echo $errores['usuario']; ?></span>
+                <?php endif; ?>
             </div>
 
             <div class="form-group">
                 <label for="password">Contraseña</label>
                 <input type="password" id="password" name="password" value="">
-                <!-- Mensaje de error para contraseña -->
-                <span class="validation-error" id="error-password">Ejemplo de mensaje</span>
+                <?php if (isset($errores['password'])): ?>
+                    <br><span class="validation-error"><?php echo $errores['password']; ?></span>
+                <?php endif; ?>
             </div>
 
-            <!-- Botón de acceso -->
             <button type="submit" name="acceder" class="btn-login">
                 Acceder
             </button>
         </form>
-        <!-- Mensaje flash para errores o éxito -->
-        <div id="flash-message-container">
-            <div class="flash-message error">Ejemplo de mensaje de error</div>
-            <!-- <div class="flash-message success">Ejemplo de mensaje de éxito</div> -->
-        </div>
-        <!-- Enlace para recuperar contraseña (no se implementa en el examen) -->
+
+        <!-- ERROR GENERAL -->
+        <?php if (isset($errores['general'])): ?>
+            <div style="background: #ffebee; color: #c62828; padding: 10px; margin: 15px 0; border-radius: 4px;">
+                <?php echo $errores['general']; ?>
+            </div>
+        <?php endif; ?>
+
         <p class="link-text">
             ¿Olvidaste tu contraseña? <a href="#">Recuperar</a>
         </p>

@@ -11,7 +11,6 @@
 </head>
 
 <body>
-
     <!-- CABECERA (Menú superior estático) -->
     <header class="header">
         <div class="container header-content">
@@ -20,8 +19,8 @@
             </div>
 
             <nav class="nav-menu">
-                <a href="index.php">📋 Dashboard</a>
-                <a href="logout.php" class="salir">🚪 Salir</a>
+                <a href="principal">📋 Dashboard</a>
+                <a href="logout" class="salir">🚪 Salir</a>
             </nav>
         </div>
     </header>

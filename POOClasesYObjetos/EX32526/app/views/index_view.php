@@ -11,6 +11,8 @@ require_once __DIR__ . '/layout/header.php';
 
 
 ?>
+
+
 <!-- CONTENIDO PRINCIPAL-->
     <main class="main-content">
         <div class="container">
@@ -62,7 +64,7 @@ require_once __DIR__ . '/layout/header.php';
                 <div class="table-controls">
                     <h2 class="table-title">Listado de Incidencias</h2>
                     <!-- Enlace para ir al formulario de alta -->
-                    <a href="alta.php" class="btn btn-add">
+                    <a href="alta" class="btn btn-add">
                         ➕ Nueva Incidencia
                     </a>
                 </div>

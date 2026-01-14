@@ -9,6 +9,7 @@ class Controller {
 
         // Convertimos el array en variables
         extract($datos);
+        
 
         // Cargamos la vista
         require_once "../app/views/$vista.php";
