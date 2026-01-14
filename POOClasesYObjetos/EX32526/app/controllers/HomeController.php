@@ -6,7 +6,7 @@ class HomeController extends Controller {
 
     public static function index() {
         // primero verificar la sesion
-        session_start();
+       
         if (!isset($_SESSION['usuario'])) {
             // si no para atras
             header('Location: login');
@@ -30,7 +30,7 @@ class HomeController extends Controller {
 
     public static function alta() {
         // verificar sesión
-        session_start();
+
         if (!isset($_SESSION['usuario'])) {
             header('Location: login');
             exit;
