@@ -80,7 +80,7 @@ class IncidenciaController extends Controller {
     
     if (empty($id) || !is_numeric($id)) {
         $_SESSION['mensajeError'] = "ID inválida";
-        header("Location: principal");
+        header('Location:principal');
         exit();
     }
     
