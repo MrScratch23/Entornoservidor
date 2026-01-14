@@ -12,6 +12,10 @@ class HomeController extends Controller {
             header('Location: login');
             exit;
         }
+        /*if (isset($_SESSION['usuario'])) {
+            header("Location: principal");
+            exit();
+        } */
  
         // Obtener datos del modelo
         $model = new IncidenciaModel();
@@ -28,15 +32,6 @@ class HomeController extends Controller {
         self::mostrarVista('index_view', $datos);
     }
 
-    public static function alta() {
-        // verificar sesión
-
-        if (!isset($_SESSION['usuario'])) {
-            header('Location: login');
-            exit;
-        }
-        
-        self::mostrarVista('alta_view', ['usuario' => $_SESSION['usuario']]);
-    }
+   
 }
 ?>

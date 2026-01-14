@@ -1,8 +1,11 @@
 <?php
+
+
 use RubenMolinaExamen\Lib\Route;
-use RubenMolinaExamen\App\Controllers\HomeController;
-use RubenMolinaExamen\App\Controllers\IncidenciaController;
-use RubenMolinaExamen\App\Controllers\LoginController;
+
+use RubenMolinaExamen\App\controllers\HomeController;
+use RubenMolinaExamen\App\controllers\IncidenciaController;
+use RubenMolinaExamen\App\controllers\LoginController;
 
 
 Route::get('/', [LoginController::class, 'mostrarFormularioLogin'] );
@@ -14,7 +17,8 @@ Route::get('/logout', [LoginController::class, 'cerrarSesion']);
 
 Route::get('/principal', [HomeController::class, 'index']);
 Route::get('/alta', [IncidenciaController::class, 'mostrarFormularioAlta']);
-
+Route::post('/alta', [IncidenciaController::class, 'validarFormulario']);
+Route::get('/eliminar/{id}', [IncidenciaController::class, 'borrarEntrada']);
 
 
 
