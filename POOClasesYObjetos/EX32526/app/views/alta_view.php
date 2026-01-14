@@ -9,7 +9,7 @@ require_once __DIR__ . '/layout/header.php';
             <h1 class="title">Alta de Nueva Incidencia</h1>
             <section class="card">
                 <!-- FORMULARIO DE ALTA-->
-                <form action="alta.php" method="POST">
+                <form action="" method="POST">
                     <h2 class="table-title form-section-title">Detalles del incidencia</h2>
                     <!-- Campo asunto -->
                     <div class="form-group">
@@ -51,7 +51,7 @@ require_once __DIR__ . '/layout/header.php';
                         <button type="submit" class="btn btn-save">
                             Guardar incidencia
                         </button>
-                        <a href="index.php" class="btn btn-secondary btn-cancel">
+                        <a href="principal" class="btn btn-secondary btn-cancel">
                             Cancelar
                         </a>
                     </div>

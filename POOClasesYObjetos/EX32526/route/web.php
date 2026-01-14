@@ -1,8 +1,8 @@
 <?php
 use RubenMolinaExamen\Lib\Route;
-use RubenMolinaExamen\App\controllers\HomeController;
-use RubenMolinaExamen\App\controllers\IncidenciaController;
-use RubenMolinaExamen\App\controllers\LoginController;
+use RubenMolinaExamen\App\Controllers\HomeController;
+use RubenMolinaExamen\App\Controllers\IncidenciaController;
+use RubenMolinaExamen\App\Controllers\LoginController;
 
 
 Route::get('/', [LoginController::class, 'mostrarFormularioLogin'] );
