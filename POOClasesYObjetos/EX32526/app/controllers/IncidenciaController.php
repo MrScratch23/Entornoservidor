@@ -105,7 +105,7 @@ class IncidenciaController extends Controller {
     public static function borrarEntrada($id) {
        
 
-        if (empty($id) || !is_numeric($id)) {
+        if (empty($id) || !ctype_digit($id)) {
             $_SESSION['mensajeError'] = "ID inválida";
             header("Location: " . BASE_URL . "principal", true, 302);
             exit();
@@ -127,7 +127,7 @@ class IncidenciaController extends Controller {
     }
 
     public static function actualizarEstado($id) {
-        if (empty($id) || !is_numeric($id)) {
+        if (empty($id) || !ctype_digit($id)) {
             $_SESSION['mensajeError'] = "ID inválida";
             header("Location: " . BASE_URL . "principal", true, 302);
             exit();
