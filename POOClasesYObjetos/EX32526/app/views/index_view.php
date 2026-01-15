@@ -109,7 +109,7 @@ require_once __DIR__ . '/layout/header.php';
                                 <!-- acciones (CRUD) -->
                                 <div class="table-actions">
                                     <!--enlace que actualiza el estado de la incidencia-->
-                                    <a href="actualizar?id=<?php echo $ticket['id']; ?>" 
+                                    <a href="actualizar/<?php echo $ticket['id']; ?>" 
                                        class="btn-toggle-status" 
                                        title="Cambiar Estado">
                                        🔄

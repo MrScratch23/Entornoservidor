@@ -2,12 +2,25 @@
 namespace RubenMolinaExamen\App\controllers;
 
 use RubenMolinaExamen\App\models\LoginModel;
+use RubenMolinaExamen\Lib\SessionManager;
 
 class LoginController extends Controller {
     
     
     public static function mostrarFormularioLogin() {
+        
+        
      
+         // Si YA está autenticado, ir a principal
+    if (isset($_SESSION['usuario'])) {
+        $usuario = SessionManager::estaAutentificado($_SESSION['usuario']);
+        if ($usuario) {
+            header("Location: " . BASE_URL . "principal");
+            exit();
+        }
+    }
+ 
+
         $errores = [];
         $mensaje = '';
     
@@ -66,8 +79,7 @@ class LoginController extends Controller {
     public static function cerrarSesion() {
        
 
-        session_unset();
-        session_destroy();
+        SessionManager::destruirSesion();
         header("Location: login", true, 302);
         exit();
 

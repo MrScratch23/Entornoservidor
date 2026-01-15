@@ -48,13 +48,14 @@
                 Acceder
             </button>
         </form>
-
        
+        <div id="flash-message-container">
         <?php if (isset($errores['general'])): ?>
-            <div class="mensaje-error">
+            <div class="flash-message error">
                 ❌ <?php echo $errores['general']; ?>
             </div>
         <?php endif; ?>
+        </div>
 
         <p class="link-text">
             ¿Olvidaste tu contraseña? <a href="#">Recuperar</a>
