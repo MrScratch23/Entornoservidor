@@ -10,17 +10,3 @@
     <link rel="stylesheet" href="css/estilos.css">
 </head>
 
-<body>
-    <!-- CABECERA (Menú superior estático) -->
-    <header class="header">
-        <div class="container header-content">
-            <div class="logo">
-                <span class="logo-icon">⚙️</span> Gestión de Incidencias
-            </div>
-
-            <nav class="nav-menu">
-                <a href="principal">📋 Dashboard</a>
-                <a href="logout" class="salir">🚪 Salir</a>
-            </nav>
-        </div>
-    </header>

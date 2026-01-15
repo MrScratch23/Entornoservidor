@@ -11,7 +11,7 @@ class LoginController extends Controller {
         
         
      
-         // Si YA está autenticado, ir a principal
+         
     if (isset($_SESSION['usuario'])) {
         $usuario = SessionManager::estaAutentificado($_SESSION['usuario']);
         if ($usuario) {

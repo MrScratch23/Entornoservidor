@@ -2,6 +2,20 @@
 require_once __DIR__ . '/layout/header.php';
 ?>
 
+<body>
+    <!-- CABECERA (Menú superior estático) -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">
+                <span class="logo-icon">⚙️</span> Gestión de Incidencias
+            </div>
+
+            <nav class="nav-menu">
+                <a href="principal">📋 Dashboard</a>
+                <a href="logout" class="salir">🚪 Salir</a>
+            </nav>
+        </div>
+    </header>
 <!-- CONTENIDO PRINCIPAL-->
 <main class="main-content">
     <div class="container">

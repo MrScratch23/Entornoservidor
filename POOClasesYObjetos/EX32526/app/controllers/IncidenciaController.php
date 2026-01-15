@@ -21,7 +21,7 @@ class IncidenciaController extends Controller {
         exit;
     }
     
-    // Mostrar vista, NO redirigir
+    // mostrar vista, NO redirigir
     $errores = [];
     $datos = [
         'asunto' => '',
@@ -107,7 +107,7 @@ class IncidenciaController extends Controller {
 
         if (empty($id) || !is_numeric($id)) {
             $_SESSION['mensajeError'] = "ID inválida";
-            header("Location: " . BASE_URL . "/principal", true, 302);
+            header("Location: " . BASE_URL . "principal", true, 302);
             exit();
         }
         
@@ -122,14 +122,14 @@ class IncidenciaController extends Controller {
             $_SESSION['mensajeError'] = "No se pudo eliminar el ticket.";
         }
         
-        header("Location: " . BASE_URL . "/principal", true, 302);
+        header("Location: " . BASE_URL . "principal", true, 302);
         exit();
     }
 
     public static function actualizarEstado($id) {
         if (empty($id) || !is_numeric($id)) {
             $_SESSION['mensajeError'] = "ID inválida";
-            header("Location: " . BASE_URL . "/principal", true, 302);
+            header("Location: " . BASE_URL . "principal", true, 302);
             exit();
         }
         
@@ -139,7 +139,7 @@ class IncidenciaController extends Controller {
         
         if (empty($ticket)) {
             $_SESSION['mensajeError'] = "El ticket no existe.";
-            header("Location: " . BASE_URL . "/principal", true, 302);
+            header("Location: " . BASE_URL . "principal", true, 302);
             exit();
         }
         
@@ -151,7 +151,7 @@ class IncidenciaController extends Controller {
             $_SESSION['mensajeError'] = "No se pudo cambiar el estado del ticket.";
         }
         
-        header("Location: " . BASE_URL . "/principal", true, 302);
+        header("Location: " . BASE_URL . "principal", true, 302);
         exit();
     }
 }
