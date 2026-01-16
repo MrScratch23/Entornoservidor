@@ -386,8 +386,8 @@
             </div>
 
             <nav class="nav-menu">
-                <a href="principal">📋 Dashboard</a>
-                <a href="logout" class="salir">🚪 Salir</a>
+                <a href="<?php echo BASE_URL; ?>principal">📋 Dashboard</a>
+                <a href="<?php echo BASE_URL; ?>logout" class="salir">🚪 Salir</a>
             </nav>
         </div>
     </header>
@@ -399,7 +399,7 @@
             
             <section class="card">
                 <!-- FORMULARIO DE MODIFICACIÓN -->
-                <form action="modificar" method="POST">
+                <form action="<?php echo BASE_URL; ?>modificar/<?php echo htmlspecialchars($datos['id'] ?? ''); ?>" method="POST">
                     <h2 class="table-title form-section-title">Detalles de la incidencia</h2>
                     
                     <!-- Campo ID oculto -->
@@ -410,7 +410,7 @@
                         <label for="asunto">Asunto (incidencia)</label>
                         <input type="text" id="asunto" name="asunto" 
                                placeholder="Ej: Error PC01" 
-                               value="<?php echo htmlspecialchars($ticket[0]['asunto'] ?? ''); ?>">
+                               value="<?php echo htmlspecialchars($datos['asunto'] ?? ''); ?>">
                         <?php if (isset($errores['asunto'])): ?>
                             <span class="validation-error" id="error-asunto">
                                 <?php echo $errores['asunto']; ?>
@@ -425,7 +425,7 @@
                             <option value="">-- Seleccione un tipo --</option>
                             <?php 
                             $tipos = ["Hardware", "Software", "Red", "Otros"];
-                            $tipoSeleccionado = $ticket[0]['tipo_incidencia'] ?? '';
+                            $tipoSeleccionado = $datos['tipo_incidencia'] ?? '';
                             foreach ($tipos as $tipo): 
                                 $selected = ($tipoSeleccionado === $tipo) ? 'selected' : '';
                             ?>
@@ -448,7 +448,7 @@
                             <option value="">-- Seleccione estado --</option>
                             <?php 
                             $estados = ["Pendiente", "En curso", "Resuelta"];
-                            $estadoSeleccionado = $ticket[0]['estado'] ?? '';
+                            $estadoSeleccionado = $datos['estado'] ?? '';
                             foreach ($estados as $estado): 
                                 $selected = ($estadoSeleccionado === $estado) ? 'selected' : '';
                             ?>
@@ -470,7 +470,7 @@
                             <label for="horas_estimadas">Horas estimadas</label>
                             <input type="number" id="horas_estimadas" name="horas_estimadas" 
                                    placeholder="Ej: 2" 
-                                   value="<?php echo htmlspecialchars($ticket[0]['horas_estimadas'] ?? ''); ?>">
+                                   value="<?php echo htmlspecialchars($datos['horas_estimadas'] ?? ''); ?>">
                             <?php if (isset($errores['horas_estimadas'])): ?>
                                 <span class="validation-error" id="error-horas">
                                     <?php echo $errores['horas_estimadas']; ?>
@@ -484,7 +484,7 @@
                         <button type="submit" class="btn btn-save">
                             Guardar cambios
                         </button>
-                        <a href="principal" class="btn btn-secondary btn-cancel">
+                        <a href="<?php echo BASE_URL; ?>principal" class="btn btn-secondary btn-cancel">
                             Cancelar
                         </a>
                     </div>
@@ -493,11 +493,13 @@
             
             <!-- Mensaje para errores o éxito -->
             <div id="flash-message-container">
-                <?php if (!empty($mensajeError)) : ?>
-                    <div class="flash-message error"><?php echo $mensajeError ?></div>
+                <?php if (isset($_SESSION['mensajeError']) && $_SESSION['mensajeError']): ?>
+                    <div class="flash-message error"><?php echo $_SESSION['mensajeError']; ?></div>
+                    <?php unset($_SESSION['mensajeError']); ?>
                 <?php endif; ?>
-                <?php if (!empty($mensajeExito)) : ?>
-                    <div class="flash-message success"><?php echo $mensajeExito ?></div>
+                <?php if (isset($_SESSION['mensajeExito']) && $_SESSION['mensajeExito']): ?>
+                    <div class="flash-message success"><?php echo $_SESSION['mensajeExito']; ?></div>
+                    <?php unset($_SESSION['mensajeExito']); ?>
                 <?php endif; ?>
             </div>
         </div>

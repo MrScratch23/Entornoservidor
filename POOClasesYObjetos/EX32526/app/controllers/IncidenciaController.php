@@ -8,49 +8,49 @@ use RubenMolinaExamen\Lib\SessionManager;
 class IncidenciaController extends Controller {
     
     public static function mostrarFormularioAlta() {
-    SessionManager::iniciarSesion();
-    
-    if (!isset($_SESSION['usuario'])) {
-        header("Location: " . BASE_URL . "login");
-        exit;
-    }
-    
-    $usuario = SessionManager::estaAutentificado($_SESSION['usuario']);
-    if (!$usuario) {
-        header("Location: " . BASE_URL . "login");
-        exit;
-    }
-    
-    // mostrar vista, NO redirigir
-    $errores = [];
-    $datos = [
-        'asunto' => '',
-        'tipo_incidencia' => '',
-        'horas_estimadas' => ''
-    ];
-    
-    self::mostrarVista('alta_view', [
-        'errores' => $errores,
-        'datos' => $datos
-    ]);
-}
-
-
- public static function mostrarFormularioModificar($id) {
-    SessionManager::iniciarSesion();
-    
-    if (!isset($_SESSION['usuario'])) {
-        header("Location: " . BASE_URL . "login");
-        exit;
-    }
-    
-    $usuario = SessionManager::estaAutentificado($_SESSION['usuario']);
-    if (!$usuario) {
-        header("Location: " . BASE_URL . "login");
-        exit;
+        SessionManager::iniciarSesion();
+        
+        if (!isset($_SESSION['usuario'])) {
+            header("Location: " . BASE_URL . "login");
+            exit;
+        }
+        
+        $usuario = SessionManager::estaAutentificado($_SESSION['usuario']);
+        if (!$usuario) {
+            header("Location: " . BASE_URL . "login");
+            exit;
+        }
+        
+        // mostrar vista, NO redirigir
+        $errores = [];
+        $datos = [
+            'asunto' => '',
+            'tipo_incidencia' => '',
+            'horas_estimadas' => ''
+        ];
+        
+        self::mostrarVista('alta_view', [
+            'errores' => $errores,
+            'datos' => $datos
+        ]);
     }
 
-     if (empty($id) || !ctype_digit($id)) {
+
+    public static function mostrarFormularioModificar($id) {
+        SessionManager::iniciarSesion();
+        
+        if (!isset($_SESSION['usuario'])) {
+            header("Location: " . BASE_URL . "login");
+            exit;
+        }
+        
+        $usuario = SessionManager::estaAutentificado($_SESSION['usuario']);
+        if (!$usuario) {
+            header("Location: " . BASE_URL . "login");
+            exit;
+        }
+
+        if (empty($id) || !ctype_digit($id)) {
             $_SESSION['mensajeError'] = "ID inválida";
             header("Location: " . BASE_URL . "principal", true, 302);
             exit();
@@ -58,33 +58,36 @@ class IncidenciaController extends Controller {
         
         $id = intval($id);
         $model = new IncidenciaModel();
-        
         $ticket = $model->obtenerPorID($id);
-    
-    
-    
-    // mostrar vista, NO redirigir
-    $errores = [];
-    $datos = [
-        'asunto' => '',
-        'tipo_incidencia' => '',
-        'horas_estimadas' => ''
-    ];
-    
-    self::mostrarVista('modificar_view', [
-        'errores' => $errores,
-        'datos' => $datos,
-        'ticket' => $ticket
-    ]);
-}
-
-public static function modificarTicket() {
-    
-}
+        
+        if (empty($ticket)) {
+            $_SESSION['mensajeError'] = "El ticket no existe.";
+            header("Location: " . BASE_URL . "principal", true, 302);
+            exit();
+        }
+        
+        // mostrar vista, NO redirigir
+        $errores = [];
+        $datos = [
+            'id' => $ticket[0]['id'],
+            'asunto' => $ticket[0]['asunto'],
+            'tipo_incidencia' => $ticket[0]['tipo_incidencia'],
+            'horas_estimadas' => $ticket[0]['horas_estimadas'],
+            'estado' => $ticket[0]['estado']
+        ];
+        
+        self::mostrarVista('modificar_view', [
+            'errores' => $errores,
+            'datos' => $datos,
+            'ticket' => $ticket
+        ]);
+    }
 
 
 
     public static function validarFormulario() {
+        SessionManager::iniciarSesion();
+        
         $errores = [];
         $asunto = $_POST['asunto'] ?? '';
         $tipo_incidencia = $_POST['tipo_incidencia'] ?? '';
@@ -129,8 +132,6 @@ public static function modificarTicket() {
         if (empty($errores)) {
             $model = new IncidenciaModel();
             
-        
-            
             $resultado = $model->crear($asunto, $tipo_incidencia, $horas_estimadas);
             
             if ($resultado) {
@@ -152,7 +153,7 @@ public static function modificarTicket() {
     }
 
     public static function borrarEntrada($id) {
-       
+        SessionManager::iniciarSesion();
 
         if (empty($id) || !ctype_digit($id)) {
             $_SESSION['mensajeError'] = "ID inválida";
@@ -176,6 +177,8 @@ public static function modificarTicket() {
     }
 
     public static function actualizarEstado($id) {
+        SessionManager::iniciarSesion();
+        
         if (empty($id) || !ctype_digit($id)) {
             $_SESSION['mensajeError'] = "ID inválida";
             header("Location: " . BASE_URL . "principal", true, 302);
@@ -203,5 +206,107 @@ public static function modificarTicket() {
         header("Location: " . BASE_URL . "principal", true, 302);
         exit();
     }
+
+    public static function modificarTicket($id) {
+        SessionManager::iniciarSesion();
+        
+        if (!isset($_SESSION['usuario'])) {
+            header("Location: " . BASE_URL . "login");
+            exit;
+        }
+        
+        $usuario = SessionManager::estaAutentificado($_SESSION['usuario']);
+        if (!$usuario) {
+            header("Location: " . BASE_URL . "login");
+            exit;
+        }
+
+        // Validar ID
+        if (empty($id) || !ctype_digit($id)) {
+            $_SESSION['mensajeError'] = "ID inválida";
+            header("Location: " . BASE_URL . "principal", true, 302);
+            exit();
+        }
+        
+        $id = intval($id);
+        
+        // Validar datos del formulario
+        $errores = [];
+        $asunto = $_POST['asunto'] ?? '';
+        $tipo_incidencia = $_POST['tipo_incidencia'] ?? '';
+        $horas_estimadas = $_POST['horas_estimadas'] ?? '';
+        $estado = $_POST['estado'] ?? '';
+        
+        // Validaciones
+        if ($asunto === '') {
+            $errores['asunto'] = "Introduzca un asunto.";
+        }
+        
+        if ($tipo_incidencia === '') {
+            $errores['tipo_incidencia'] = "Seleccione un tipo de incidencia.";
+        } else {
+            $tiposValidos = ["Hardware", "Software", "Red", "Otros"];
+            if (!in_array($tipo_incidencia, $tiposValidos)) {
+                $errores['tipo_incidencia'] = "Tipo de incidencia no válido.";
+            }
+        }
+        
+        // Validar horas estimadas
+        if ($horas_estimadas === '') {
+            $errores['horas_estimadas'] = "Las horas estimadas no pueden estar vacías.";
+        } elseif (!is_numeric($horas_estimadas)) {
+            $errores['horas_estimadas'] = "Introduzca un número válido para las horas.";
+        } elseif ($horas_estimadas < 0) {
+            $errores['horas_estimadas'] = "Las horas no pueden ser negativas.";
+        } else {
+            $horas_estimadas = intval($horas_estimadas);
+        }
+        
+        // Validar estado
+        if ($estado === '') {
+            $errores['estado'] = "Seleccione un estado.";
+        } else {
+            $estadosValidos = ["Pendiente", "En curso", "Resuelta"];
+            if (!in_array($estado, $estadosValidos)) {
+                $errores['estado'] = "Estado no válido.";
+            }
+        }
+        
+        // Datos para la vista en caso de errores
+        $datosFormulario = [
+            'id' => $id,
+            'asunto' => $asunto,
+            'tipo_incidencia' => $tipo_incidencia,
+            'horas_estimadas' => $horas_estimadas,
+            'estado' => $estado
+        ];
+        
+        // Si hay errores, mostrar el formulario de nuevo con los errores
+        if (!empty($errores)) {
+            $model = new IncidenciaModel();
+            $ticket = $model->obtenerPorID($id);
+            
+            self::mostrarVista('modificar_view', [
+                'errores' => $errores,
+                'datos' => $datosFormulario,
+                'ticket' => $ticket
+            ]);
+            return;
+        }
+        
+        // Si no hay errores, modificar el ticket
+        $model = new IncidenciaModel();
+        $resultado = $model->modificarTicket($id, $asunto, $tipo_incidencia, $estado, $horas_estimadas);
+
+        if ($resultado) {
+            $_SESSION['mensajeExito'] = "Ticket modificado correctamente.";
+        } else {
+            $_SESSION['mensajeError'] = "Hubo un error al modificar el ticket.";
+        }
+        
+        header("Location: " . BASE_URL . "principal", true, 302); 
+        exit();
+    }
+
 }
 ?>

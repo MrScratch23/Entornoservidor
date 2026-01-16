@@ -21,6 +21,7 @@ Route::post('/alta', [IncidenciaController::class, 'validarFormulario']);
 Route::get('/eliminar/{id}', [IncidenciaController::class, 'borrarEntrada']);
 Route::get('/actualizar/{id}', [IncidenciaController::class, 'actualizarEstado']);
 Route::get('/modificar/{id}', [IncidenciaController::class, 'mostrarFormularioModificar']);
+Route::post('modificar/{id}', [IncidenciaController::class, 'modificarTicket']);
 
 
 Route::handleRoute();
