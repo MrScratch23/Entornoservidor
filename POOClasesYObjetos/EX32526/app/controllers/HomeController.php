@@ -23,10 +23,31 @@ class HomeController extends Controller {
     $model = new IncidenciaModel();
     $tickets = $model->obtenerTodos();
     $mediaHoras = $model->obtenerMediaHoras();
+    $ticketsResueltos = 0;
+    $ticketsPendientes = 0;
+    $ticketsCurso = 0;
+
+
+    foreach ($tickets as $ticket) {
+        if ($ticket['estado'] === "Resuelta") {
+            $ticketsResueltos++;
+        }
+        if ($ticket['estado'] === "En curso") {
+            $ticketsCurso++;
+        }
+        if ($ticket['estado']=== "Pendiente") {
+            $ticketsPendientes;
+        }
+    }
+
+
 
     $datos = [
         'tickets' => $tickets, 
         'mediaHoras' => $mediaHoras,
+        'ticketsResueltos' => $ticketsResueltos,
+        'ticketsPendientes' => $ticketsPendientes,
+        'ticketsCurso' => $ticketsCurso,
         'usuario' => $_SESSION['usuario']
     ];
 

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/layout/header.php';
+
 ?>
 
 
@@ -29,6 +30,12 @@ require_once __DIR__ . '/layout/header.php';
                 <div>
                     <p class="stat-label">Total Tickets</p>
                     <p class="stat-value"><?php echo count($tickets) ?></p>
+                     <p class="stat-label">Total Tickets Resueltos</p>
+                    <p class="stat-value"><?php echo ($ticketsResueltos) ?></p>
+                            <p class="stat-label">Total Tickets Pendientes</p>
+                    <p class="stat-value"><?php echo ($ticketsPendientes) ?></p>
+                            <p class="stat-label">Total Tickets en Curso</p>
+                    <p class="stat-value"><?php echo ($ticketsCurso) ?></p>
                 </div>
             </div>
             <div class="card stat-card average">
@@ -129,7 +136,11 @@ require_once __DIR__ . '/layout/header.php';
                                        title="Cambiar Estado">
                                        🔄
                                     </a>
-                                    
+                                    <a href="modificar/<?php echo $ticket['id']; ?>" 
+   class="btn-edit" 
+   title="Modificar Incidencia">
+   ✏️
+</a>
                                     <!--enlace que elimina la incidencia-->
                              <a href="eliminar/<?php echo $ticket['id']; ?>" class="btn-delete" title="Eliminar">🗑️</a>
                             

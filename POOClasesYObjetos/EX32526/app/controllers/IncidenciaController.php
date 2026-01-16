@@ -35,6 +35,55 @@ class IncidenciaController extends Controller {
     ]);
 }
 
+
+ public static function mostrarFormularioModificar($id) {
+    SessionManager::iniciarSesion();
+    
+    if (!isset($_SESSION['usuario'])) {
+        header("Location: " . BASE_URL . "login");
+        exit;
+    }
+    
+    $usuario = SessionManager::estaAutentificado($_SESSION['usuario']);
+    if (!$usuario) {
+        header("Location: " . BASE_URL . "login");
+        exit;
+    }
+
+     if (empty($id) || !ctype_digit($id)) {
+            $_SESSION['mensajeError'] = "ID inválida";
+            header("Location: " . BASE_URL . "principal", true, 302);
+            exit();
+        }
+        
+        $id = intval($id);
+        $model = new IncidenciaModel();
+        
+        $ticket = $model->obtenerPorID($id);
+    
+    
+    
+    // mostrar vista, NO redirigir
+    $errores = [];
+    $datos = [
+        'asunto' => '',
+        'tipo_incidencia' => '',
+        'horas_estimadas' => ''
+    ];
+    
+    self::mostrarVista('modificar_view', [
+        'errores' => $errores,
+        'datos' => $datos,
+        'ticket' => $ticket
+    ]);
+}
+
+public static function modificarTicket() {
+    
+}
+
+
+
     public static function validarFormulario() {
         $errores = [];
         $asunto = $_POST['asunto'] ?? '';
