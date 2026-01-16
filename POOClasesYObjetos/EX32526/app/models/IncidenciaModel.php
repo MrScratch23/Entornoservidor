@@ -1,45 +1,40 @@
-    <?php
+<?php
 
-    use RubenMolinaExamen\Lib\Database;
-    
-        class IncidenciaModel {
-        private $db;
+namespace RubenMolinaExamen\App\models;
+
+use RubenMolinaExamen\Lib\Database;
+
+class IncidenciaModel {
+    private $db;
 
     public function __construct() {
-
         $this->db = new Database ();
     }
 
-
     public function obtenerTodos() {
-    $sql = "SELECT * FROM incidencias";
-    $resultado = $this->db->executeQuery($sql);
+        $sql = "SELECT * FROM incidencias";
+        $resultado = $this->db->executeQuery($sql);
 
+        if (empty($resultado)) {
+            return false;
+        }
 
-    if (empty($resultado)) {
-        return false;
-    }
-
-    return $resultado;
-
+        return $resultado;
     }
 
     public function modificarTicket(int $id, string $asunto, string $tipo, string $estado, int $horas) {
-        // Asegúrate de usar el nombre real de la tabla y columnas
         $sql = "UPDATE incidencias 
                 SET asunto = ?, tipo_incidencia = ?, estado = ?, horas_estimadas = ?
                 WHERE id = ?";
 
-        // parametros en el mismo orden que los placeholders
         $params = [$asunto, $tipo, $estado, $horas, $id];
 
-        // usar tu método de acceso a DB (ajusta según tu Database::executeUpdate)
         return $this->db->executeUpdate($sql, $params);
     }
 
     public function eliminarPorID($id) {
-    $sql = "DELETE FROM incidencias WHERE id = ?";
-    return $this->db->executeUpdate($sql, [$id]);
+        $sql = "DELETE FROM incidencias WHERE id = ?";
+        return $this->db->executeUpdate($sql, [$id]);
     }
 
     public function obtenerPorID($id) {
@@ -48,33 +43,26 @@
     }
 
     public function crear ($asunto, $tipoIncidencia, $horas) {
-        // pendiente por defecto, now para la fecha actual
-    $sql = "INSERT INTO incidencias(asunto, tipo_incidencia, horas_estimadas, estado, fecha_creacion) VALUES(?,?,?, 'Pendiente', NOW())";
-    return $this->db->executeUpdate($sql, [$asunto, $tipoIncidencia, $horas]);
+        $sql = "INSERT INTO incidencias(asunto, tipo_incidencia, horas_estimadas, estado, fecha_creacion) VALUES(?,?,?, 'Pendiente', NOW())";
+        return $this->db->executeUpdate($sql, [$asunto, $tipoIncidencia, $horas]);
     }
 
     public function cambiarEstado($id, $estado) {
-        
-        $sql = "UPDATE  incidencias SET
-        estado = ?
-        WHERE id = ?";
+        $sql = "UPDATE incidencias SET estado = ? WHERE id = ?";
 
         if ($estado === "Pendiente") {
             $comando = "En curso";
-        }
-
-        if ($estado === "En curso") {
+        } elseif ($estado === "En curso") {
             $comando = "Resuelta";
-        }
-        if ($estado === "Resuelta") {
+        } elseif ($estado === "Resuelta") {
             $comando = "Pendiente";
+        } else {
+            $comando = $estado;
         }
-
 
         return $this->db->executeUpdate($sql, [$comando, $id]);
     }
 
-    // obtener media de horas estimadas
     public function obtenerMediaHoras() {
         $sql = "SELECT AVG(horas_estimadas) AS media_horas FROM incidencias";
         $resultado = $this->db->executeQuery($sql);
@@ -85,9 +73,5 @@
 
         return $resultado[0]['media_horas'];
     }
-
-
-    }
-
-
-    ?>
+}
+?>
