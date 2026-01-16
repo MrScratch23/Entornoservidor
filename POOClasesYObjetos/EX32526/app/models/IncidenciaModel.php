@@ -1,10 +1,9 @@
     <?php
 
-    namespace RubenMolinaExamen\App\models;
     use RubenMolinaExamen\Lib\Database;
-
-    class IncidenciaModel {
-    private $db;
+    
+        class IncidenciaModel {
+        private $db;
 
     public function __construct() {
 
