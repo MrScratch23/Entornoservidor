@@ -11,6 +11,7 @@ class SessionManager {
     }
 
     public static function destruirSesion() {
+        session_unset();
         session_destroy();
     }
 
