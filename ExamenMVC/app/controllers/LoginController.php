@@ -70,20 +70,23 @@ class LoginController extends Controller {
         
         if ($usuarioAutenticado) {
             $_SESSION['usuario'] = $usuarioAutenticado;
-            header('Location: /');
+            header('Location: ' . BASE_URL);
             exit;
         } else {
             $_SESSION['mensaje-error'] = "Usuario o contraseña incorrectos";
-            header('Location: login');
+            header('Location: ' . BASE_URL . 'login');
             exit;
         }
     }
 
     public static function cerrarSesion() {
-        SessionManager::iniciarSesion();
+       
+
         SessionManager::destruirSesion();
-        header("Location: login");
+         header('Location: ' . BASE_URL . 'login');
         exit();
+
+       
     }
 }
 ?>

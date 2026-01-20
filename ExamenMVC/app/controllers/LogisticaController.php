@@ -24,7 +24,7 @@ public static function index() {
     $model = new LogisticaModel();
     $vehiculos = $model->obtenerTodos();
 
-    self::mostrarVista("index_view", $vehiculos);
+    self::mostrarVista("index_view", ['vehiculos' => $vehiculos]);
 
     // self::mostrarVista('index_view', $datos);
 }
