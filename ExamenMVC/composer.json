@@ -1,0 +1,16 @@
+{
+    "name": "daw2/examen-mvc",
+    "autoload": {
+        "psr-4": {
+            "RubenMolinaExamenMVC\\App\\": "app/",
+            "RubenMolinaExamenMVC\\Lib\\": "lib/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ruben",
+            "email": "r.ternero.molina@iescristobaldemonroy.es"
+        }
+    ],
+    "require": {}
+}
