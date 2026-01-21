@@ -25,6 +25,16 @@ class LogisticaModel {
         return $resultado;
     }
 
+    // ejemplos con transaction y commit
+// $this->db->beginTransaction();
+// sql update/delete etc
+// $num_registros = $this->db->executeUpdate($sql, [$nuevo_estado])
+// if $num_registros != 1 $this->db-rollback
+// return false
+// si no hay fallo
+// $this->db->commit();
+// return true;
+
 
 
     }

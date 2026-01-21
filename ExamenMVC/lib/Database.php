@@ -103,6 +103,20 @@ class Database {
     public function close() {
         $this->conn->close();
     }
+
+
+    public function beginTransaction(){
+        return $this->conn->begin_transaction();
+    }
+
+    public function commit() {
+        return $this->conn->commit();
+    }
+
+    public function rollback() {
+        return $this->conn->commit();
+    }
+
     
     public function getLastInsertId() {
         return $this->conn->insert_id;
