@@ -23,6 +23,8 @@ public static function index() {
     
     $model = new LogisticaModel();
     $vehiculos = $model->obtenerTodos();
+    // por si pide filtrar por datos de usuario
+    // $vehiculosUsuario = $model->obtenerPorID($_SESSiON['usuario]['id_empleado']);
 
     self::mostrarVista("index_view", ['vehiculos' => $vehiculos]);
 

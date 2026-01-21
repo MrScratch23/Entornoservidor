@@ -1,4 +1,8 @@
 
+<?php
+var_dump($_SESSION['usuario']);
+
+?>
 
 <!DOCTYPE html>
 <html lang="es">

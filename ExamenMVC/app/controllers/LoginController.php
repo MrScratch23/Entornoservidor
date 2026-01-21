@@ -83,6 +83,8 @@ class LoginController extends Controller {
        
 
         SessionManager::destruirSesion();
+        SessionManager::iniciarSesion();
+        SessionManager::crearMensajeFlash("mensaje_exito", "Sesion cerrada correctamente");
          header('Location: ' . BASE_URL . 'login');
         exit();
 

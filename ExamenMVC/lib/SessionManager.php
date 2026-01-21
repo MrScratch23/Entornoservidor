@@ -20,9 +20,14 @@ class SessionManager {
 
         return isset($usuario);
         
-
-        
     }
+
+
+    public static function crearMensajeFlash($tipo, $mensaje) {
+        return $_SESSION[$tipo] = $mensaje;
+    }
+
+
 }
 
 ?>

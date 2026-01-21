@@ -34,6 +34,7 @@ class LogisticaModel {
 // si no hay fallo
 // $this->db->commit();
 // return true;
+  
 
 
 

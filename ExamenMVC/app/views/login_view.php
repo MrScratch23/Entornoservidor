@@ -17,6 +17,13 @@
             </header>
 
             <main class="login-content">
+
+                    <!-- Mensaje Flash de exito -->
+                <?php if (!empty($mensaje)): ?>
+                <div class="flash-message flash-success">
+                    <?php echo htmlspecialchars($mensaje); ?>
+                </div>
+                <?php endif; ?>
             
                 <!-- Mensaje Flash de error -->
                 <?php if (!empty($mensajeError)): ?>

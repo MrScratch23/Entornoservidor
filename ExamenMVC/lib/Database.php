@@ -118,8 +118,9 @@ class Database {
     }
 
     
-    public function getLastInsertId() {
+   /* public function getLastInsertId() {
         return $this->conn->insert_id;
     }
+    */
 }
 ?>
