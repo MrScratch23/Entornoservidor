@@ -34,9 +34,9 @@ class LoginModel {
                 'id_empleado' => $resultado[0]['id_empleado'],
                 'nombre' => $resultado[0]['nombre'],
                 'apellidos' => $resultado[0]['apellidos'],
-                'pin' => $resultado[0]['pin'],
+                // 'pin' => $resultado[0]['pin'],
                 'rol' => $resultado[0]['rol'],
-                'fecha_creacion' => $resultado[0]['fecha_creacion']
+                // 'fecha_creacion' => $resultado[0]['fecha_creacion']
             ];
         }
         

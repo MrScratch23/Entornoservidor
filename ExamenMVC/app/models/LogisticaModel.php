@@ -34,8 +34,45 @@ class LogisticaModel {
 // si no hay fallo
 // $this->db->commit();
 // return true;
-  
 
+    public function obtenerPorID($id) {
+        // ejemplo $sql = "SELECT * FROM incidencias WHERE id = ?";
+        $sql = "SELECT * FROM vehiculos WHERE id = ?";
+
+        $resultado = $this->db->executeQuery($sql, [$id]);
+
+           if (empty($resultado)) {
+            return false;
+        }
+
+        return $resultado;
+
+    }
+  
+    public function obtenerPaquetes() {
+        $sql = "SELECT * FROM paquetes
+        where estado = 'Pendiente'
+        ORDER BY prioridad ASC, peso DESC";
+
+         $resultado = $this->db->executeQuery($sql);
+
+        if (empty($resultado)) {
+            return false;
+        }
+
+        return $resultado;
+
+    }
+
+    public function confirmarEnvio($id_vehiculo, array $codigos_paquetes) {
+        $this->db->beginTransaction();
+
+        $sqlIV = "UPDATE vehiculos SET estado = 'En ruta' WHERE id = ?";
+        $update_vehiculo = $this->db->executeUpdate($sqlIV, [$id_vehiculo]);
+
+        $placeholders = implode(',', array_fill(0, count($codigos_paquetes), '?'));
+
+    }
 
 
     }
